@@ -5,8 +5,8 @@ import {
   CardContent,
   CardTitle,
   CardDescription,
-} from "./ui/8bit/card";
-import { Button } from "./ui/8bit/button";
+} from "@/components/ui/8bit/card";
+import { Button } from "@/components/ui/8bit/button";
 import { Checkbox } from "@/components/ui/8bit/checkbox";
 import { toast } from "@/components/ui/8bit/toast";
 import { Input } from "@/components/ui/8bit/input";

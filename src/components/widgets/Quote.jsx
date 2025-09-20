@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import quotes from "../data/quotes.json";
+import quotes from "@/data/quotes.json";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/8bit/card";
-import { Button } from "./ui/8bit/button";
+} from "@/components/ui/8bit/card";
+import { Button } from "@/components/ui/8bit/button";
 
 const STORAGE_KEY = "dailyQuote";
 

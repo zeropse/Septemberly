@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, CardTitle, CardHeader, CardContent } from "./ui/8bit/card";
-import { Button } from "./ui/8bit/button";
+import {
+  Card,
+  CardTitle,
+  CardHeader,
+  CardContent,
+} from "@/components/ui/8bit/card";
+import { Button } from "@/components/ui/8bit/button";
 
 const STORAGE_KEY = "pomodoro";
 

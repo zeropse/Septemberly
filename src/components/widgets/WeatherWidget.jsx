@@ -9,8 +9,12 @@ import {
 import { Input } from "@/components/ui/8bit/input";
 import { Button } from "@/components/ui/8bit/button";
 import { ICONS } from "@/data/weather-icons";
-import { Switch } from "./ui/8bit/switch";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/8bit/tooltip";
+import { Switch } from "@/components/ui/8bit/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/8bit/tooltip";
 
 const STORAGE_KEY = "CityWeather";
 
