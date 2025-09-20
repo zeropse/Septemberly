@@ -8,8 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-
-const STORAGE_KEY = "dailyQuote";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 function getRandomQuote(exclude) {
   let newQuote;
@@ -23,46 +22,30 @@ function todayString() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function loadDailyQuote() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const today = todayString();
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed?.date === today && parsed?.quote) {
-        return parsed.quote;
-      }
-    }
-    const q = getRandomQuote(undefined);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ date: today, quote: q })
-    );
-    return q;
-  } catch {
-    return getRandomQuote(undefined);
-  }
-}
-
 export default function Quote() {
   const [quote, setQuote] = useState(null);
+  const [dailyQuote, setDailyQuote] = useLocalStorage("dailyQuote", null);
 
-  // Load only on client after mount
+  // Load daily quote
   useEffect(() => {
-    setQuote(loadDailyQuote());
-  }, []);
+    const today = todayString();
+
+    if (dailyQuote?.date === today && dailyQuote?.quote) {
+      setQuote(dailyQuote.quote);
+    } else {
+      const newQuote = getRandomQuote(undefined);
+      const newDailyQuote = { date: today, quote: newQuote };
+      setDailyQuote(newDailyQuote);
+      setQuote(newQuote);
+    }
+  }, [dailyQuote, setDailyQuote]);
 
   const handleRefresh = () => {
     const newQ = getRandomQuote(quote);
+    const today = todayString();
+    const newDailyQuote = { date: today, quote: newQ };
+    setDailyQuote(newDailyQuote);
     setQuote(newQ);
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ date: todayString(), quote: newQ })
-      );
-    } catch {
-      /* ignore storage errors */
-    }
   };
 
   if (!quote) {

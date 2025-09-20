@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -24,8 +24,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/8bit/dialog";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
-const STORAGE_KEY = "notes";
 const defaultCategories = ["personal", "study", "ideas"];
 
 function uid() {
@@ -33,15 +33,7 @@ function uid() {
 }
 
 export default function Notes() {
-  const [notes, setNotes] = useState(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      console.error("Failed to load notes", e);
-      return [];
-    }
-  });
+  const [notes, setNotes] = useLocalStorage("notes", []);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -50,14 +42,6 @@ export default function Notes() {
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [deleteDialogId, setDeleteDialogId] = useState(null);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-    } catch (e) {
-      console.error("Failed to save notes", e);
-    }
-  }, [notes]);
 
   const resetForm = () => {
     setTitle("");

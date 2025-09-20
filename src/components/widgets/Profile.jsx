@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/8bit/card";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 function getInitials(name) {
   if (!name) return "?";
@@ -22,17 +23,15 @@ function getInitials(name) {
 }
 
 export default function ProfileCard() {
-  let onboarding = null;
-  try {
-    const raw = localStorage.getItem("Profile");
-    if (raw) onboarding = JSON.parse(raw);
-  } catch {
-    onboarding = null;
-  }
+  const [profile] = useLocalStorage("Profile", {
+    name: "Name",
+    trait: "Autumn",
+    about: "Need Sleep",
+  });
 
-  const name = onboarding?.name || "Name";
-  const trait = onboarding?.trait || "Autumn";
-  const about = onboarding?.about || "Need Sleep";
+  const name = profile.name || "Name";
+  const trait = profile.trait || "Autumn";
+  const about = profile.about || "Need Sleep";
 
   return (
     <Card className="min-w-sm max-w-md">

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/8bit/button";
 import { Checkbox } from "@/components/ui/8bit/checkbox";
 import { toast } from "@/components/ui/8bit/toast";
 import { Input } from "@/components/ui/8bit/input";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
-const STORAGE_KEY = "todos";
 const MAX_TODOS = 10;
 
 function uid() {
@@ -19,27 +19,10 @@ function uid() {
 }
 
 export default function TodoList() {
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      console.error("Failed to load todos", e);
-      return [];
-    }
-  });
+  const [tasks, setTasks] = useLocalStorage("todos", []);
 
   const [text, setText] = useState("");
   const inputRef = useRef(null);
-
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    } catch (e) {
-      console.error("Failed to save todos", e);
-    }
-  }, [tasks]);
 
   const addTask = useCallback(
     (e) => {
@@ -61,14 +44,17 @@ export default function TodoList() {
       setText("");
       inputRef.current?.focus();
     },
-    [text, tasks]
+    [text, tasks, setTasks]
   );
 
-  const toggle = useCallback((id) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
-    );
-  }, []);
+  const toggle = useCallback(
+    (id) => {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+      );
+    },
+    [setTasks]
+  );
 
   const remove = useCallback(
     (id) => {
@@ -78,7 +64,7 @@ export default function TodoList() {
       }
       setTasks((prev) => prev.filter((t) => t.id !== id));
     },
-    [tasks]
+    [tasks, setTasks]
   );
 
   const total = tasks.length;
@@ -122,7 +108,7 @@ export default function TodoList() {
               />
               <div className="flex-1 min-w-0">
                 <span
-                  className={`block max-w-[40ch] whitespace-normal break-words ${
+                  className={`block max-w-[35ch] whitespace-normal break-words ${
                     t.done ? "line-through text-gray-400" : ""
                   }`}
                 >

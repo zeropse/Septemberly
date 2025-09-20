@@ -6,8 +6,7 @@ import {
   CardContent,
 } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-
-const STORAGE_KEY = "pomodoro";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 // Config constants
 const POMODORO = {
@@ -44,30 +43,24 @@ export default function Pomodoro() {
   const [mode, setMode] = useState("focus");
   const [secondsLeft, setSecondsLeft] = useState(POMODORO.FOCUS);
   const [running, setRunning] = useState(false);
-  const [sessions, setSessions] = useState(0);
+  const [sessions, setSessions] = useLocalStorage("pomodoro-sessions", 0);
 
-  // Load saved state
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (data.sessions) setSessions(data.sessions);
-        if (data.mode) setMode(data.mode);
-        if (data.secondsLeft) setSecondsLeft(data.secondsLeft);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+  // Load saved state from localStorage
+  const [savedState, setSavedState] = useLocalStorage("pomodoro", {
+    mode: "focus",
+    secondsLeft: POMODORO.FOCUS,
+  });
 
-  // Persist state
+  // Initialize state from saved data
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ sessions, mode, secondsLeft })
-    );
-  }, [sessions, mode, secondsLeft]);
+    if (savedState.mode) setMode(savedState.mode);
+    if (savedState.secondsLeft) setSecondsLeft(savedState.secondsLeft);
+  }, [savedState.mode, savedState.secondsLeft]);
+
+  // Save state whenever it changes
+  useEffect(() => {
+    setSavedState({ mode, secondsLeft });
+  }, [mode, secondsLeft, setSavedState]);
 
   // Timer logic
   useInterval(

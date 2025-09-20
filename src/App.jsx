@@ -10,16 +10,12 @@ import { Card, CardContent } from "@/components/ui/8bit/card";
 import { Separator } from "@/components/ui/8bit/separator";
 import { cn } from "@/lib/utils";
 import widgets from "@/data/widgets";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const App = () => {
   const [active, setActive] = useState(widgets[0].id);
-  const [onboarded, setOnboarded] = useState(() => {
-    try {
-      return Boolean(localStorage.getItem("Profile"));
-    } catch {
-      return false;
-    }
-  });
+  const [profile] = useLocalStorage("Profile", null);
+  const [onboarded, setOnboarded] = useState(() => Boolean(profile));
 
   const ActiveComponent =
     widgets.find((w) => w.id === active)?.component || Notes;

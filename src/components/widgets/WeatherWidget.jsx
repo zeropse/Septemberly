@@ -10,10 +10,10 @@ import { Input } from "@/components/ui/8bit/input";
 import { Button } from "@/components/ui/8bit/button";
 import { ICONS } from "@/data/weather-icons";
 import { Switch } from "@/components/ui/8bit/switch";
-
-const STORAGE_KEY = "CityWeather";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function WeatherWidget() {
+  const [savedCity, setSavedCity] = useLocalStorage("CityWeather", "");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [temperature, setTemperature] = useState(null);
@@ -77,21 +77,20 @@ export default function WeatherWidget() {
 
   // Load saved city on mount
   useEffect(() => {
-    const savedCity = localStorage.getItem(STORAGE_KEY);
     if (savedCity) {
       setCity(savedCity);
       setSaveCity(true);
       fetchWeather(savedCity);
     }
-  }, [fetchWeather]);
+  }, [savedCity, fetchWeather]);
 
   useEffect(() => {
     if (saveCity && city) {
-      localStorage.setItem(STORAGE_KEY, city);
+      setSavedCity(city);
     } else {
-      localStorage.removeItem(STORAGE_KEY);
+      setSavedCity("");
     }
-  }, [saveCity, city]);
+  }, [saveCity, city, setSavedCity]);
 
   return (
     <Card>
