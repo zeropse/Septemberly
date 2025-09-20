@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -74,9 +75,9 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.3492 0.0034 286.2208);
   --sidebar-ring: oklch(0.6831 0.1874 46.6481);
-  --font-sans: Roboto Mono;
+  --font-sans: "Press Start 2P", monospace, system-ui, -apple-system, sans-serif;
   --font-serif: serif;
-  --font-mono: Roboto Mono;
+  --font-mono: "Press Start 2P", monospace, "Courier New", courier;
   --radius: 0.3rem;
   --shadow-2xs: 0px 4px 8px -2px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 4px 8px -2px hsl(0 0% 0% / 0.05);
@@ -128,9 +129,9 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.2768 0 0);
   --sidebar-ring: oklch(0.6831 0.1874 46.6481);
-  --font-sans: Roboto Mono;
+  --font-sans: "Press Start 2P", monospace, system-ui, -apple-system, sans-serif;
   --font-serif: serif;
-  --font-mono: Roboto Mono;
+  --font-mono: "Press Start 2P", monospace, "Courier New", courier;
   --radius: 0.3rem;
   --shadow-2xs: 0px 5px 10px -3px hsl(0 0% 0% / 0.13);
   --shadow-xs: 0px 5px 10px -3px hsl(0 0% 0% / 0.13);

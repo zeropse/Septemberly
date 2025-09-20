@@ -107,10 +107,7 @@ export default function TodoList() {
           )}
 
           {tasks.map((t) => (
-            <li
-              key={t.id}
-              className="mt-2 flex items-center gap-3 p-2 rounded-md hover:bg-gray-800 transition-colors"
-            >
+            <li key={t.id} className="mt-2 flex items-center gap-3 p-2">
               <Checkbox
                 checked={t.done}
                 onCheckedChange={() => toggle(t.id)}

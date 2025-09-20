@@ -12,33 +12,42 @@ const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="septemberly-ui-theme">
       <Toaster position="top-right" />
-      <ErrorBoundary>
-        <div className="max-w-[920px] mx-auto px-4 py-8">
-          <header className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold">Septemberly</h1>
-            <ModeToggle />
-          </header>
+      <div className="max-w-[920px] mx-auto px-4 py-8 min-h-screen">
+        <header className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold tracking-wide flex items-center gap-2">
+            🌿 Septemberly
+          </h1>
+          <ModeToggle />
+        </header>
 
-          <main
-            className="grid gap-4"
-            style={{ gridTemplateColumns: "1fr 320px" }}
-          >
-            <section>
+        <main className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+          {/* Main Notes Section */}
+          <section>
+            <ErrorBoundary>
               <Notes />
-            </section>
+            </ErrorBoundary>
+          </section>
 
-            <aside>
+          {/* Sidebar Widgets */}
+          <aside className="flex flex-col space-y-4">
+            <ErrorBoundary>
               <TodoList />
-              <div />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
               <Pomodoro />
-              <div />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
               <WeatherWidget />
-              <div />
+            </ErrorBoundary>
+
+            <ErrorBoundary>
               <Quote />
-            </aside>
-          </main>
-        </div>
-      </ErrorBoundary>
+            </ErrorBoundary>
+          </aside>
+        </main>
+      </div>
     </ThemeProvider>
   );
 };
