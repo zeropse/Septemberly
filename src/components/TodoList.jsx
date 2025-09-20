@@ -1,24 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "./ui/8bit/card";
+import { Button } from "./ui/8bit/button";
+import { Checkbox } from "@/components/ui/8bit/checkbox";
+import { toast } from "@/components/ui/8bit/toast";
+import { Input } from "@/components/ui/8bit/input";
 
 const STORAGE_KEY = "todos_v1";
+const MAX_TODOS = 5;
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
 }
 
 export default function TodoList() {
-  const [tasks, setTasks] = useState([]);
-  const [text, setText] = useState("");
-
-  useEffect(() => {
+  const [tasks, setTasks] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setTasks(JSON.parse(raw));
+      return raw ? JSON.parse(raw) : [];
     } catch (e) {
       console.error("Failed to load todos", e);
+      return [];
     }
-  }, []);
+  });
 
+  const [text, setText] = useState("");
+  const inputRef = useRef(null);
+
+  // Save tasks to localStorage whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -27,69 +41,102 @@ export default function TodoList() {
     }
   }, [tasks]);
 
-  const addTask = (e) => {
-    e.preventDefault();
-    if (!text.trim()) return;
-    setTasks((prev) => [
-      { id: uid(), text: text.trim(), done: false, createdAt: Date.now() },
-      ...prev,
-    ]);
-    setText("");
-  };
+  const addTask = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!text.trim()) return;
 
-  const toggle = (id) =>
+      if (tasks.length >= MAX_TODOS) {
+        toast(`Todo limit reached. Max ${MAX_TODOS} tasks allowed.`);
+        return;
+      }
+
+      const newTask = {
+        id: uid(),
+        text: text.trim(),
+        done: false,
+      };
+
+      setTasks((prev) => [newTask, ...prev]);
+      setText("");
+      inputRef.current?.focus();
+    },
+    [text, tasks]
+  );
+
+  const toggle = useCallback((id) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
     );
-  const remove = (id) => setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const remove = useCallback((id) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   const total = tasks.length;
   const completed = tasks.filter((t) => t.done).length;
 
   return (
-    <div className="bg-white/2 border border-white/5 p-3 rounded-md mb-3">
-      <h2 className="font-semibold">To-Do</h2>
-      <form onSubmit={addTask} className="flex gap-2 mt-2">
-        <input
-          className="flex-1 p-2 rounded-md bg-transparent border border-gray-700"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Add task..."
-        />
-        <button className="px-3 py-1 rounded-md bg-sky-500 text-sky-900">
-          Add
-        </button>
-      </form>
+    <Card className="mb-3">
+      <CardHeader>
+        <CardTitle>To-Do</CardTitle>
+        <CardDescription className="pt-2">
+          {completed} / {total} completed
+        </CardDescription>
+      </CardHeader>
 
-      <div className="mt-2 text-sm text-gray-400">
-        {completed} / {total} completed
-      </div>
+      <CardContent>
+        <form onSubmit={addTask} className="flex gap-4">
+          <Input
+            ref={inputRef}
+            aria-label="New task"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Add task..."
+            className="flex-1"
+          />
+          <Button type="submit" className="mt-2 cursor-pointer">
+            Add
+          </Button>
+        </form>
 
-      <ul className="mt-2 space-y-2">
-        {tasks.map((t) => (
-          <li key={t.id} className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={t.done}
-              onChange={() => toggle(t.id)}
-            />
-            <span
-              className={`${t.done ? "line-through text-gray-400" : ""} flex-1`}
+        <ul className="space-y-2">
+          {tasks.length === 0 && (
+            <li className="text-sm text-gray-400 mt-5">No tasks yet.</li>
+          )}
+
+          {tasks.map((t) => (
+            <li
+              key={t.id}
+              className="mt-2 flex items-center gap-3 p-2 rounded-md hover:bg-gray-800 transition-colors"
             >
-              {t.text}
-            </span>
-            <button
-              className="px-2 py-1 rounded-md bg-gray-700"
-              onClick={() => remove(t.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-        {tasks.length === 0 && (
-          <li className="text-sm text-gray-400">No tasks yet — add one.</li>
-        )}
-      </ul>
-    </div>
+              <Checkbox
+                checked={t.done}
+                onCheckedChange={() => toggle(t.id)}
+                aria-label={`Mark ${t.text} as ${t.done ? "not done" : "done"}`}
+              />
+              <div className="flex-1">
+                <span
+                  className={`break-words ${
+                    t.done ? "line-through text-gray-400" : ""
+                  }`}
+                >
+                  {t.text}
+                </span>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => remove(t.id)}
+                className="cursor-pointer"
+              >
+                Delete
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

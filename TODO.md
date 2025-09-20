@@ -1,0 +1,2 @@
+- [ ] add proper audio for pomodoro
+- [ ] fix todo width.. text go out card

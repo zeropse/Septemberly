@@ -24,7 +24,6 @@ export default function Pomodoro() {
   const [sessions, setSessions] = useState(0);
 
   const timerRef = useRef(null);
-  const audioRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -50,13 +49,6 @@ export default function Pomodoro() {
 
   useEffect(() => {
     if (secondsLeft <= 0) {
-      // play sound
-      try {
-        audioRef.current && audioRef.current.play();
-      } catch (err) {
-        console.error("audio play failed", err);
-      }
-
       if (mode === "focus") {
         setSessions((s) => s + 1);
         setMode("break");
@@ -135,11 +127,11 @@ export default function Pomodoro() {
           </div>
 
           {/* Start/Stop Button */}
-          <div className="mb-3 w-full">
+          <div className="mb-6 w-full">
             {!running ? (
               <Button
                 onClick={start}
-                className="w-full py-3 text-lg font-semibold"
+                className="w-full py-3 text-lg font-semibold cursor-pointer"
               >
                 Start
               </Button>
@@ -147,7 +139,7 @@ export default function Pomodoro() {
               <Button
                 onClick={stop}
                 variant="destructive"
-                className="w-full py-3 text-lg font-semibold"
+                className="w-full py-3 text-lg font-semibold cursor-pointer"
               >
                 Stop
               </Button>
@@ -159,7 +151,7 @@ export default function Pomodoro() {
             <Button
               onClick={reset}
               variant="secondary"
-              className="w-full py-2 text-sm"
+              className="w-full py-2 text-sm cursor-pointer"
             >
               Reset
             </Button>
@@ -170,13 +162,6 @@ export default function Pomodoro() {
             Sessions completed: {sessions}
           </div>
         </div>
-
-        <audio ref={audioRef}>
-          <source
-            src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
-            type="audio/wav"
-          />
-        </audio>
       </CardContent>
     </Card>
   );
