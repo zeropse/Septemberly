@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card, CardTitle, CardHeader, CardContent } from "./ui/8bit/card";
 import { Button } from "./ui/8bit/button";
 
-const STORAGE_KEY = "pomodoro_v1";
+const STORAGE_KEY = "pomodoro";
 
 function formatTime(s) {
   const m = Math.floor(s / 60)

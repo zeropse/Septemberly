@@ -9,6 +9,8 @@ import {
 } from "./ui/8bit/card";
 import { Button } from "./ui/8bit/button";
 
+const STORAGE_KEY = "dailyQuote";
+
 function getRandomQuote(exclude) {
   let newQuote;
   do {
@@ -23,7 +25,7 @@ function todayString() {
 
 function loadDailyQuote() {
   try {
-    const raw = localStorage.getItem("dailyQuote");
+    const raw = localStorage.getItem(STORAGE_KEY);
     const today = todayString();
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -33,7 +35,7 @@ function loadDailyQuote() {
     }
     const q = getRandomQuote(undefined);
     localStorage.setItem(
-      "dailyQuote",
+      STORAGE_KEY,
       JSON.stringify({ date: today, quote: q })
     );
     return q;
@@ -55,7 +57,7 @@ export default function Quote() {
     setQuote(newQ);
     try {
       localStorage.setItem(
-        "dailyQuote",
+        STORAGE_KEY,
         JSON.stringify({ date: todayString(), quote: newQ })
       );
     } catch {

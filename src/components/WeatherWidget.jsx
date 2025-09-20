@@ -12,6 +12,8 @@ import { ICONS } from "@/data/weather-icons";
 import { Switch } from "./ui/8bit/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/8bit/tooltip";
 
+const STORAGE_KEY = "CityWeather";
+
 export default function WeatherWidget() {
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
@@ -62,7 +64,7 @@ export default function WeatherWidget() {
 
   // Load saved city on mount
   useEffect(() => {
-    const savedCity = localStorage.getItem("CityWeather");
+    const savedCity = localStorage.getItem(STORAGE_KEY);
     if (savedCity) {
       setCity(savedCity);
       setSaveCity(true);
@@ -72,9 +74,9 @@ export default function WeatherWidget() {
 
   useEffect(() => {
     if (saveCity && city) {
-      localStorage.setItem("CityWeather", city);
+      localStorage.setItem(STORAGE_KEY, city);
     } else {
-      localStorage.removeItem("CityWeather");
+      localStorage.removeItem(STORAGE_KEY);
     }
   }, [saveCity, city]);
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "notes_v1";
+const STORAGE_KEY = "notes";
 
 const defaultCategories = ["personal", "study", "ideas"];
 

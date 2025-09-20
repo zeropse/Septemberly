@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/8bit/checkbox";
 import { toast } from "@/components/ui/8bit/toast";
 import { Input } from "@/components/ui/8bit/input";
 
-const STORAGE_KEY = "todos_v1";
+const STORAGE_KEY = "todos";
 const MAX_TODOS = 5;
 
 function uid() {
