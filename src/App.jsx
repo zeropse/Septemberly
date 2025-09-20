@@ -5,6 +5,7 @@ import Pomodoro from "./components/widgets/Pomodoro";
 import WeatherWidget from "./components/widgets/WeatherWidget";
 import Quote from "./components/widgets/Quote";
 import Header from "./components/Header";
+import Onboarding from "./components/Onboarding/Onboarding";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./style/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -22,6 +23,13 @@ const widgets = [
 
 const App = () => {
   const [active, setActive] = useState(widgets[0].id);
+  const [onboarded, setOnboarded] = useState(() => {
+    try {
+      return Boolean(localStorage.getItem("Profile"));
+    } catch {
+      return false;
+    }
+  });
 
   const ActiveComponent =
     widgets.find((w) => w.id === active)?.component || Notes;
@@ -32,6 +40,14 @@ const App = () => {
 
       <div className="max-w-[920px] mx-auto px-4 py-8 min-h-screen">
         <Header />
+
+        {!onboarded && (
+          <Onboarding
+            onFinish={() => {
+              setOnboarded(true);
+            }}
+          />
+        )}
         <Separator className="my-4" />
 
         {/* Desktop/Laptop Layout */}
