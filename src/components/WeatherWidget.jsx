@@ -1,30 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/8bit/card";
+import { Input } from "@/components/ui/8bit/input";
+import { Button } from "@/components/ui/8bit/button";
+import { ICONS } from "@/data/weather-icons";
 
-const ICONS = {
-  Clear: "☀️",
-  Clouds: "☁️",
-  Rain: "🌧️",
-  Drizzle: "🌦️",
-  Thunderstorm: "⛈️",
-  Snow: "❄️",
-  Mist: "🌫️",
-};
-
-export default function WeatherWidget({ defaultCity = "London" }) {
-  const [city, setCity] = useState(defaultCity);
+export default function WeatherWidget() {
+  const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(null);
+  const [temperature, setTemperature] = useState(null);
+  const [icon, setIcon] = useState("❓");
   const [error, setError] = useState(null);
 
-  // Read API key from global var (if set)
-  const GLOBAL_KEY =
-    typeof window !== "undefined" && window.__OPENWEATHER_API_KEY__;
+  const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
   async function fetchWeather(q) {
-    const API_KEY = GLOBAL_KEY || "YOUR_OPENWEATHER_API_KEY";
-    if (!API_KEY || API_KEY === "YOUR_OPENWEATHER_API_KEY") {
+    if (!API_KEY) {
       setError("Missing OpenWeather API key");
-      setData(null);
+      setTemperature(null);
+      return;
+    }
+
+    if (!q) {
+      setError("Please enter a city");
+      setTemperature(null);
       return;
     }
 
@@ -32,76 +36,60 @@ export default function WeatherWidget({ defaultCity = "London" }) {
     setError(null);
 
     try {
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-          q
-        )}&units=metric&appid=${API_KEY}`
+      const { data } = await axios.get(
+        "https://api.openweathermap.org/data/2.5/weather",
+        { params: { q, appid: API_KEY, units: "metric" } }
       );
-      if (!res.ok) throw new Error("Failed to fetch");
-      const json = await res.json();
-      setData(json);
+
+      setTemperature(Math.round(data.main.temp));
+      setIcon(ICONS[data.weather[0].id] || "❓");
     } catch (err) {
-      setError(err.message || "Error");
-      setData(null);
+      setError(
+        err.response?.data?.message || err.message || "Error fetching weather"
+      );
+      setTemperature(null);
+      setIcon("❓");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
-    if (GLOBAL_KEY) fetchWeather(city);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const icon =
-    data && (ICONS[data.weather[0].main] || data.weather[0].icon || "🌈");
-
   return (
-    <div className="bg-gray-900/40 border border-gray-800 p-3 rounded-md mb-3">
-      <h2 className="font-semibold">Weather</h2>
-
-      {/* Input + Refresh button */}
-      <div className="flex items-center gap-2 mt-2">
-        <input
-          className="flex-1 p-2 rounded-md bg-transparent border border-gray-700"
+    <Card className="mb-3">
+      <CardHeader>
+        <CardTitle>Weather</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 text-center">
+        <Input
+          className="w-full bg-transparent text-center"
           value={city}
           onChange={(e) => setCity(e.target.value)}
+          placeholder="Enter city"
         />
-        <button
-          className="px-3 py-1 rounded-md bg-sky-500 text-sky-900"
+
+        <Button
+          className="w-full cursor-pointer"
+          variant="default"
           onClick={() => fetchWeather(city)}
+          disabled={loading}
         >
           Refresh
-        </button>
-      </div>
+        </Button>
 
-      {/* States */}
-      {loading && <div className="text-sm text-gray-400 mt-2">Loading…</div>}
+        {loading && <div className="text-2xl text-gray-400">Loading…</div>}
 
-      {error && (
-        <div className="text-sm text-gray-400 mt-2">
-          {error}. If you don’t have an API key, set{" "}
-          <code>OPENWEATHER_API_KEY</code> in your environment.
-        </div>
-      )}
-
-      {data && (
-        <div className="mt-2">
-          <div className="text-2xl">
-            {icon} {Math.round(data.main.temp)}°C
-          </div>
+        {error && (
           <div className="text-sm text-gray-400">
-            {data.name} • {data.weather[0].main}
+            {error}. Make sure your OpenWeather API key is valid.
           </div>
-        </div>
-      )}
+        )}
 
-      {!data && !loading && !error && (
-        <div className="text-sm text-gray-400 mt-2">
-          No data. Set an OpenWeather API key or search a city and click
-          Refresh.
-        </div>
-      )}
-    </div>
+        {temperature !== null && !loading && !error && (
+          <div className="text-2xl mt-2 flex items-center gap-2 justify-center">
+            {icon} {temperature}°C
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

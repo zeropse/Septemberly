@@ -74,7 +74,7 @@ export default function Pomodoro() {
   const progress = Math.max(0, Math.min(1, 1 - secondsLeft / total));
 
   return (
-    <Card className="bg-white/2 border border-white/5 p-3 rounded-md mb-3">
+    <Card className="border border-white/5 p-3 rounded-md mb-3">
       <CardHeader className="text-center">
         <CardTitle>Pomodoro</CardTitle>
       </CardHeader>

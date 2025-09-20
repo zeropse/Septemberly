@@ -1,30 +1,103 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import quotes from "../data/quotes.json";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/8bit/card";
+import { Button } from "./ui/8bit/button";
 
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function getRandomQuote(exclude) {
+  let newQuote;
+  do {
+    newQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  } while (quotes.length > 1 && newQuote.text === exclude?.text);
+  return newQuote;
+}
+
+function todayString() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function loadDailyQuote() {
+  try {
+    const raw = localStorage.getItem("dailyQuote");
+    const today = todayString();
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.date === today && parsed?.quote) {
+        return parsed.quote;
+      }
+    }
+    const q = getRandomQuote(undefined);
+    localStorage.setItem(
+      "dailyQuote",
+      JSON.stringify({ date: today, quote: q })
+    );
+    return q;
+  } catch {
+    return getRandomQuote(undefined);
+  }
 }
 
 export default function Quote() {
-  const [q, setQ] = useState(() => pick(quotes));
+  const [quote, setQuote] = useState(null);
 
+  // Load only on client after mount
   useEffect(() => {
-    // nothing
+    setQuote(loadDailyQuote());
   }, []);
 
+  const handleRefresh = () => {
+    const newQ = getRandomQuote(quote);
+    setQuote(newQ);
+    try {
+      localStorage.setItem(
+        "dailyQuote",
+        JSON.stringify({ date: todayString(), quote: newQ })
+      );
+    } catch {
+      /* ignore storage errors */
+    }
+  };
+
+  if (!quote) {
+    return (
+      <Card className="mb-3">
+        <CardHeader>
+          <CardTitle className="font-semibold">Quote of the Day</CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-500">Loading...</CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <div className="bg-white/2 border border-white/5 p-3 rounded-md mb-3">
-      <h2 className="font-semibold">Quote of the Day</h2>
-      <blockquote className="italic mt-2">“{q.text}”</blockquote>
-      <div className="text-right text-sm text-gray-400">— {q.author}</div>
-      <div className="mt-2">
-        <button
-          className="px-3 py-1 rounded-md bg-gray-700"
-          onClick={() => setQ(pick(quotes))}
+    <Card className="mb-3">
+      <CardHeader>
+        <CardTitle className="font-semibold">Quote of the Day</CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <blockquote className="italic leading-relaxed text-gray-400">
+          “{quote.text}”
+        </blockquote>
+        <div className="text-right mt-2 text-sm text-gray-600">
+          — {quote.author}
+        </div>
+      </CardContent>
+
+      <CardFooter>
+        <Button
+          size="sm"
+          onClick={handleRefresh}
+          className="w-full cursor-pointer"
         >
           Refresh
-        </button>
-      </div>
-    </div>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

@@ -32,7 +32,7 @@ const App = () => {
               <div />
               <Pomodoro />
               <div />
-              <WeatherWidget defaultCity="San Francisco" />
+              <WeatherWidget />
               <div />
               <Quote />
             </aside>
