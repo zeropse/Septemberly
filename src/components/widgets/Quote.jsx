@@ -67,7 +67,7 @@ export default function Quote() {
 
   if (!quote) {
     return (
-      <Card className="mb-3">
+      <Card>
         <CardHeader>
           <CardTitle className="font-semibold">Quote of the Day</CardTitle>
         </CardHeader>
@@ -77,17 +77,19 @@ export default function Quote() {
   }
 
   return (
-    <Card className="mb-3">
+    <Card>
       <CardHeader>
         <CardTitle className="font-semibold">Quote of the Day</CardTitle>
       </CardHeader>
 
-      <CardContent>
-        <blockquote className="italic leading-relaxed text-gray-400">
-          “{quote.text}”
-        </blockquote>
-        <div className="text-right mt-2 text-sm text-gray-600">
-          — {quote.author}
+      <CardContent className="mb-10 flex flex-col justify-between min-h-[90px]">
+        <div>
+          <blockquote className="italic leading-relaxed text-gray-400 mb-3">
+            “{quote.text}”
+          </blockquote>
+          <div className="text-right mt-2 text-sm text-gray-600">
+            — {quote.author}
+          </div>
         </div>
       </CardContent>
 

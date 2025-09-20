@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/8bit/button";
 
 const STORAGE_KEY = "pomodoro";
 
+// Config constants
+const POMODORO = {
+  FOCUS: 25 * 60,
+  BREAK: 5 * 60,
+};
+
 function formatTime(s) {
   const m = Math.floor(s / 60)
     .toString()
@@ -19,75 +25,99 @@ function formatTime(s) {
   return `${m}:${sec}`;
 }
 
-export default function Pomodoro() {
-  const FOCUS = 25 * 60;
-  const BREAK = 5 * 60;
+// useInterval hook
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
 
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    if (delay === null) return;
+    const id = setInterval(() => savedCallback.current(), delay);
+    return () => clearInterval(id);
+  }, [delay]);
+}
+
+export default function Pomodoro() {
   const [mode, setMode] = useState("focus");
-  const [secondsLeft, setSecondsLeft] = useState(FOCUS);
+  const [secondsLeft, setSecondsLeft] = useState(POMODORO.FOCUS);
   const [running, setRunning] = useState(false);
   const [sessions, setSessions] = useState(0);
 
-  const timerRef = useRef(null);
-
+  // Load saved state
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const data = JSON.parse(raw);
         if (data.sessions) setSessions(data.sessions);
+        if (data.mode) setMode(data.mode);
+        if (data.secondsLeft) setSecondsLeft(data.secondsLeft);
       }
     } catch (e) {
       console.error(e);
     }
   }, []);
 
+  // Persist state
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessions }));
-  }, [sessions]);
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ sessions, mode, secondsLeft })
+    );
+  }, [sessions, mode, secondsLeft]);
 
-  useEffect(() => {
-    if (!running) return;
-    timerRef.current = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
-    return () => clearInterval(timerRef.current);
-  }, [running]);
+  // Timer logic
+  useInterval(
+    () => {
+      if (!running) return;
 
-  useEffect(() => {
-    if (secondsLeft <= 0) {
-      if (mode === "focus") {
-        setSessions((s) => s + 1);
-        setMode("break");
-        setSecondsLeft(BREAK);
-        setRunning(false);
+      if (secondsLeft > 0) {
+        setSecondsLeft((s) => s - 1);
       } else {
-        setMode("focus");
-        setSecondsLeft(FOCUS);
+        if (mode === "focus") {
+          setSessions((s) => s + 1);
+          setMode("break");
+          setSecondsLeft(POMODORO.BREAK);
+        } else {
+          setMode("focus");
+          setSecondsLeft(POMODORO.FOCUS);
+        }
         setRunning(false);
       }
-    }
-  }, [secondsLeft, mode, FOCUS, BREAK]);
+    },
+    running ? 1000 : null
+  );
 
-  const start = () => setRunning(true);
-  const stop = () => setRunning(false);
+  const toggleRunning = () => setRunning((r) => !r);
   const reset = () => {
     setRunning(false);
     setMode("focus");
-    setSecondsLeft(FOCUS);
+    setSecondsLeft(POMODORO.FOCUS);
   };
 
-  const total = mode === "focus" ? FOCUS : BREAK;
+  const total = mode === "focus" ? POMODORO.FOCUS : POMODORO.BREAK;
   const progress = Math.max(0, Math.min(1, 1 - secondsLeft / total));
 
+  // 6. Color change based on mode
+  const progressColor = mode === "focus" ? "#0ea5e9" : "#22c55e";
+
   return (
-    <Card className="border border-white/5 p-3 rounded-md mb-3">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle>Pomodoro</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center">
-          {/* Circular timer */}
-          <svg width="180" height="180" viewBox="0 0 200 200" className="mb-6">
-            {/* Background circle */}
+          <svg
+            onClick={toggleRunning}
+            width="180"
+            height="180"
+            viewBox="0 0 200 200"
+            className="mb-6 cursor-pointer"
+          >
             <circle
               cx="100"
               cy="100"
@@ -96,12 +126,11 @@ export default function Pomodoro() {
               strokeWidth="12"
               fill="none"
             />
-            {/* Progress circle */}
             <circle
               cx="100"
               cy="100"
               r="70"
-              stroke="#0ea5e9"
+              stroke={progressColor}
               strokeWidth="12"
               fill="none"
               strokeDasharray={2 * Math.PI * 70}
@@ -109,50 +138,25 @@ export default function Pomodoro() {
               strokeLinecap="round"
               transform="rotate(-90 100 100)"
               style={{
-                transition: "stroke-dashoffset 1s linear",
+                transition: "stroke-dashoffset 0.5s ease-out, stroke 0.5s",
               }}
             />
-            {/* Centered timer text */}
             <text
               x="100"
               y="105"
               fontSize="24"
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="#e2e8f0"
-              fontWeight="700"
             >
               {formatTime(secondsLeft)}
             </text>
           </svg>
 
-          {/* Mode text */}
-          <div className="text-base mb-3 text-gray-300 font-medium">
+          <div className="text-base my-5 font-medium">
             {mode === "focus" ? "Focus" : "Break"}
           </div>
 
-          {/* Start/Stop Button */}
           <div className="mb-6 w-full">
-            {!running ? (
-              <Button
-                onClick={start}
-                className="w-full py-3 text-lg font-semibold cursor-pointer"
-              >
-                Start
-              </Button>
-            ) : (
-              <Button
-                onClick={stop}
-                variant="destructive"
-                className="w-full py-3 text-lg font-semibold cursor-pointer"
-              >
-                Stop
-              </Button>
-            )}
-          </div>
-
-          {/* Reset Button */}
-          <div className="w-full">
             <Button
               onClick={reset}
               variant="secondary"
@@ -162,7 +166,6 @@ export default function Pomodoro() {
             </Button>
           </div>
 
-          {/* Sessions completed */}
           <div className="mt-4 text-sm text-gray-400">
             Sessions completed: {sessions}
           </div>

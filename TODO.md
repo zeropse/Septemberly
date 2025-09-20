@@ -1,2 +1,3 @@
 - [ ] add proper audio for pomodoro
-- [ ] fix todo width.. text go out card
+- [ ] fix notes
+- [ ] have good UI

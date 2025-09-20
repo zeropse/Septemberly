@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/8bit/toast";
 import { Input } from "@/components/ui/8bit/input";
 
 const STORAGE_KEY = "todos";
-const MAX_TODOS = 5;
+const MAX_TODOS = 10;
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
@@ -70,15 +70,22 @@ export default function TodoList() {
     );
   }, []);
 
-  const remove = useCallback((id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-  }, []);
+  const remove = useCallback(
+    (id) => {
+      const taskToRemove = tasks.find((t) => t.id === id);
+      if (taskToRemove) {
+        toast(`Task "${taskToRemove.text}" deleted.`);
+      }
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    },
+    [tasks]
+  );
 
   const total = tasks.length;
   const completed = tasks.filter((t) => t.done).length;
 
   return (
-    <Card className="mb-3">
+    <Card>
       <CardHeader>
         <CardTitle>To-Do</CardTitle>
         <CardDescription className="pt-2">
@@ -107,15 +114,15 @@ export default function TodoList() {
           )}
 
           {tasks.map((t) => (
-            <li key={t.id} className="mt-2 flex items-center gap-3 p-2">
+            <li key={t.id} className="mt-2 flex items-center gap-3 p-2 min-w-0">
               <Checkbox
                 checked={t.done}
                 onCheckedChange={() => toggle(t.id)}
                 aria-label={`Mark ${t.text} as ${t.done ? "not done" : "done"}`}
               />
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <span
-                  className={`break-words ${
+                  className={`block max-w-[40ch] whitespace-normal break-words ${
                     t.done ? "line-through text-gray-400" : ""
                   }`}
                 >

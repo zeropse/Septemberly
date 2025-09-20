@@ -10,11 +10,6 @@ import { Input } from "@/components/ui/8bit/input";
 import { Button } from "@/components/ui/8bit/button";
 import { ICONS } from "@/data/weather-icons";
 import { Switch } from "@/components/ui/8bit/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/8bit/tooltip";
 
 const STORAGE_KEY = "CityWeather";
 
@@ -25,6 +20,7 @@ export default function WeatherWidget() {
   const [icon, setIcon] = useState("❓");
   const [error, setError] = useState(null);
   const [saveCity, setSaveCity] = useState(false);
+  const [weatherData, setWeatherData] = useState(null);
 
   const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -53,12 +49,25 @@ export default function WeatherWidget() {
 
         setTemperature(Math.round(data.main.temp));
         setIcon(ICONS[data.weather[0].id] || "❓");
+        setWeatherData({
+          feelsLike: Math.round(data.main.feels_like),
+          humidity: data.main.humidity,
+          pressure: data.main.pressure,
+          description: data.weather[0].description,
+          tempMin: Math.round(data.main.temp_min),
+          tempMax: Math.round(data.main.temp_max),
+          visibility: data.visibility
+            ? Math.round(data.visibility / 1000)
+            : null,
+          clouds: data.clouds?.all || 0,
+        });
       } catch (err) {
         setError(
           err.response?.data?.message || err.message || "Error fetching weather"
         );
         setTemperature(null);
         setIcon("❓");
+        setWeatherData(null);
       } finally {
         setLoading(false);
       }
@@ -85,22 +94,18 @@ export default function WeatherWidget() {
   }, [saveCity, city]);
 
   return (
-    <Card className="mb-3">
+    <Card>
       <CardHeader className="flex items-center justify-between">
         <CardTitle>Weather</CardTitle>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Switch
-              aria-label="Save City"
-              className="cursor-pointer"
-              checked={saveCity}
-              onCheckedChange={setSaveCity}
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Save City</p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="flex items-center gap-2">
+          <span>Save City</span>
+          <Switch
+            aria-label="Save City"
+            className="cursor-pointer"
+            checked={saveCity}
+            onCheckedChange={setSaveCity}
+          />
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-3 text-center">
@@ -120,17 +125,32 @@ export default function WeatherWidget() {
           Refresh
         </Button>
 
-        {loading && <div className="text-2xl text-gray-400">Loading…</div>}
+        {loading && <div className="text-2xl text-gray-400 pt-5">Loading…</div>}
 
-        {error && (
-          <div className="text-sm text-gray-400">
-            {error}. Make sure your OpenWeather API key is valid.
-          </div>
-        )}
+        {error && <div className="text-xl text-gray-400 pt-5">{error}</div>}
 
         {temperature !== null && !loading && !error && (
-          <div className="text-2xl mt-2 flex items-center gap-2 justify-center">
-            {icon} {temperature}°C
+          <div className="space-y-2">
+            <div className="text-2xl mt-2 flex items-center gap-2 justify-center">
+              {icon} {temperature}°C
+            </div>
+            {weatherData && (
+              <div className="text-sm text-gray-400 space-y-4">
+                <div>Feels like: {weatherData.feelsLike}°C</div>
+                <div>Humidity: {weatherData.humidity}%</div>
+                <div>Pressure: {weatherData.pressure} hPa</div>
+                {weatherData.visibility && (
+                  <div>Visibility: {weatherData.visibility} km</div>
+                )}
+                <div>Clouds: {weatherData.clouds}%</div>
+                <div className="capitalize">
+                  Weather: {weatherData.description}
+                </div>
+                <div className="text-xs">
+                  Min: {weatherData.tempMin}°C | Max: {weatherData.tempMax}°C
+                </div>
+              </div>
+            )}
           </div>
         )}
       </CardContent>

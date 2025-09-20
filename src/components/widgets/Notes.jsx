@@ -127,7 +127,7 @@ export default function Notes() {
   return (
     <div className="space-y-4">
       {/* Note Form */}
-      <Card className="p-4">
+      <Card>
         <CardHeader>
           <h2 className="text-lg font-semibold">Cozy Notes</h2>
         </CardHeader>
