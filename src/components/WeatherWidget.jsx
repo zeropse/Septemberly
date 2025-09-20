@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Card,
@@ -9,6 +9,8 @@ import {
 import { Input } from "@/components/ui/8bit/input";
 import { Button } from "@/components/ui/8bit/button";
 import { ICONS } from "@/data/weather-icons";
+import { Switch } from "./ui/8bit/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/8bit/tooltip";
 
 export default function WeatherWidget() {
   const [city, setCity] = useState("");
@@ -16,49 +18,85 @@ export default function WeatherWidget() {
   const [temperature, setTemperature] = useState(null);
   const [icon, setIcon] = useState("❓");
   const [error, setError] = useState(null);
+  const [saveCity, setSaveCity] = useState(false);
 
   const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
-  async function fetchWeather(q) {
-    if (!API_KEY) {
-      setError("Missing OpenWeather API key");
-      setTemperature(null);
-      return;
+  const fetchWeather = useCallback(
+    async (q) => {
+      if (!API_KEY) {
+        setError("Missing OpenWeather API key");
+        setTemperature(null);
+        return;
+      }
+
+      if (!q) {
+        setError("Please enter a city");
+        setTemperature(null);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data } = await axios.get(
+          "https://api.openweathermap.org/data/2.5/weather",
+          { params: { q, appid: API_KEY, units: "metric" } }
+        );
+
+        setTemperature(Math.round(data.main.temp));
+        setIcon(ICONS[data.weather[0].id] || "❓");
+      } catch (err) {
+        setError(
+          err.response?.data?.message || err.message || "Error fetching weather"
+        );
+        setTemperature(null);
+        setIcon("❓");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_KEY]
+  );
+
+  // Load saved city on mount
+  useEffect(() => {
+    const savedCity = localStorage.getItem("CityWeather");
+    if (savedCity) {
+      setCity(savedCity);
+      setSaveCity(true);
+      fetchWeather(savedCity);
     }
+  }, [fetchWeather]);
 
-    if (!q) {
-      setError("Please enter a city");
-      setTemperature(null);
-      return;
+  useEffect(() => {
+    if (saveCity && city) {
+      localStorage.setItem("CityWeather", city);
+    } else {
+      localStorage.removeItem("CityWeather");
     }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { data } = await axios.get(
-        "https://api.openweathermap.org/data/2.5/weather",
-        { params: { q, appid: API_KEY, units: "metric" } }
-      );
-
-      setTemperature(Math.round(data.main.temp));
-      setIcon(ICONS[data.weather[0].id] || "❓");
-    } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Error fetching weather"
-      );
-      setTemperature(null);
-      setIcon("❓");
-    } finally {
-      setLoading(false);
-    }
-  }
+  }, [saveCity, city]);
 
   return (
     <Card className="mb-3">
-      <CardHeader>
+      <CardHeader className="flex items-center justify-between">
         <CardTitle>Weather</CardTitle>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Switch
+              aria-label="Save City"
+              className="cursor-pointer"
+              checked={saveCity}
+              onCheckedChange={setSaveCity}
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Save City</p>
+          </TooltipContent>
+        </Tooltip>
       </CardHeader>
+
       <CardContent className="space-y-3 text-center">
         <Input
           className="w-full bg-transparent text-center"

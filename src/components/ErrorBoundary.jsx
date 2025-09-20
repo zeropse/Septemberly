@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/8bit/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -25,22 +26,35 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-6 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-700">
-          <h2 className="text-xl font-semibold text-red-800 dark:text-red-200 mb-2">
-            Something went wrong
-          </h2>
-          <details className="mb-4 whitespace-pre-wrap text-sm text-red-700 dark:text-red-300">
-            {this.state.error && this.state.error.toString()}
-            {this.state.info && this.state.info.componentStack}
-          </details>
-          <div className="flex gap-2">
-            <Button onClick={() => window.location.reload()}>
-              Reload page
-            </Button>
-            <Button variant="ghost" onClick={this.reset}>
-              Dismiss
-            </Button>
-          </div>
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center text-red-700">
+                Something went wrong
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <details className="mb-4 whitespace-pre-wrap text-sm text-red-700 cursor-pointer">
+                {this.state.error && this.state.error.toString()}
+                {this.state.info && this.state.info.componentStack}
+              </details>
+              <div className="flex gap-4 justify-center">
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="cursor-pointer"
+                >
+                  Reload page
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={this.reset}
+                  className="cursor-pointer"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       );
     }
