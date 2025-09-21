@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Notes from "./widgets/Notes";
-import Onboarding from "./Onboarding/Onboarding";
+import Onboarding from "@/components/Onboarding/Onboarding";
 import ErrorBoundary from "@/components/sections/ErrorBoundary";
 import Dock from "@/components/Dock";
 import { Card, CardContent } from "@/components/ui/8bit/card";
@@ -12,9 +10,6 @@ const Content = ({ active, setActive }) => {
   active = active || widgets[0].id;
   const [profile] = useLocalStorage("Profile", null);
   const [onboarded, setOnboarded] = useState(() => Boolean(profile));
-
-  const ActiveComponent =
-    widgets.find((w) => w.id === active)?.component || Notes;
 
   return (
     <>
@@ -30,30 +25,27 @@ const Content = ({ active, setActive }) => {
       <div className="hidden lg:block">
         <div className="flex gap-10">
           {/* Main Widget Area */}
-          <motion.div
-            className="flex-1"
-            layout
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
+          <div className="flex-1">
             <Card className="h-full">
               <CardContent>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="h-full"
-                  >
-                    <ErrorBoundary>
-                      <ActiveComponent />
-                    </ErrorBoundary>
-                  </motion.div>
-                </AnimatePresence>
+                {widgets.map((widget) => {
+                  const WidgetComponent = widget.component;
+                  return (
+                    <div
+                      key={widget.id}
+                      className={`h-full ${
+                        active === widget.id ? "block" : "hidden"
+                      }`}
+                    >
+                      <ErrorBoundary>
+                        <WidgetComponent />
+                      </ErrorBoundary>
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </div>
 

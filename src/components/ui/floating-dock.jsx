@@ -49,7 +49,12 @@ const FloatingDockMobile = ({ items, className }) => {
                 <a
                   href={item.href}
                   key={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200",
+                    item.isActive && item.color
+                      ? item.color
+                      : "bg-gray-50 dark:bg-neutral-900"
+                  )}
                   onClick={(e) => {
                     if (item.onClick) {
                       e.preventDefault();
@@ -100,7 +105,15 @@ const FloatingDockDesktop = ({ items, className }) => {
   );
 };
 
-function IconContainer({ mouseX, title, icon, href, onClick }) {
+function IconContainer({
+  mouseX,
+  title,
+  icon,
+  href,
+  onClick,
+  color,
+  isActive,
+}) {
   let ref = useRef(null);
 
   let distance = useTransform(mouseX, (val) => {
@@ -143,6 +156,20 @@ function IconContainer({ mouseX, title, icon, href, onClick }) {
 
   const [hovered, setHovered] = useState(false);
 
+  // Create the background class based on color and active state
+  const getBackgroundClass = () => {
+    if (isActive && color) {
+      // Active state: use the widget's color
+      return color;
+    } else if (hovered && color) {
+      // Hovered state: use a lighter version of the widget's color
+      return color.replace("/10", "/20").replace("/20", "/30");
+    } else {
+      // Default state: use the original neutral colors
+      return "bg-gray-200 dark:bg-neutral-800";
+    }
+  };
+
   return (
     <a
       href={href}
@@ -166,7 +193,10 @@ function IconContainer({ mouseX, title, icon, href, onClick }) {
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
+        className={cn(
+          "relative flex aspect-square items-center justify-center rounded-full transition-colors duration-200",
+          getBackgroundClass()
+        )}
       >
         <AnimatePresence>
           {hovered && (
