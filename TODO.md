@@ -1,6 +1,2 @@
-- [ ] add proper audio for pomodoro
-- [ ] fix notes
-- [ ] have good UI
 - [ ] a homepage
-- [ ] add a badge selector
-- [ ] add a bage earning feature
+- [ ] if website okay then make electron GUI

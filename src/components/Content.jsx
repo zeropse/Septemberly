@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/8bit/card";
 import Onboarding from "@/components/Onboarding/Onboarding";
 import ErrorBoundary from "@/components/sections/ErrorBoundary";
 import Dock from "@/components/Dock";
-import widgets from "@/data/widgets";
+import widgets from "@/data/widgets.jsx";
 import { useAppStore } from "@/stores/appStore";
 
 const Content = () => {

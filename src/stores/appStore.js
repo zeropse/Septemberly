@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import widgets from "@/data/widgets";
+import widgets from "@/data/widgets.jsx";
 
 export const useAppStore = create(
   persist(

@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
 } from "@/components/ui/8bit/dialog";
 
@@ -76,6 +77,11 @@ export default function Notes() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingId ? "Edit Note" : "New Note"}</DialogTitle>
+            <DialogDescription>
+              {editingId
+                ? "Edit your note content and title."
+                : "Create a new note to store your thoughts."}
+            </DialogDescription>
           </DialogHeader>
           <CreateNote
             title={title}

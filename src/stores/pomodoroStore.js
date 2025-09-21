@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { toast } from "@/components/ui/8bit/toast";
 
 const POMODORO = {
   FOCUS: 25 * 60,
@@ -18,10 +19,14 @@ export const usePomodoroStore = create(
 
       // Actions
       startTimer: () =>
-        set({
-          running: true,
-          lastUpdated: Date.now(),
-        }),
+        set(
+          {
+            running: true,
+            lastUpdated: Date.now(),
+          },
+          false,
+          "startTimer"
+        ) || toast("Timer started"),
 
       pauseTimer: () =>
         set({
@@ -78,8 +83,10 @@ export const usePomodoroStore = create(
           if (state.mode === "focus") {
             state.incrementSession();
             state.switchMode("break");
+            toast("Focus session complete — take a break!");
           } else {
             state.switchMode("focus");
+            toast("Break finished — back to focus!");
           }
         } else {
           set({
@@ -107,8 +114,10 @@ export const usePomodoroStore = create(
               if (state.mode === "focus") {
                 state.incrementSession();
                 state.switchMode("break");
+                toast("Focus session completed while away — enjoy your break!");
               } else {
                 state.switchMode("focus");
+                toast("Break finished while away — back to focus!");
               }
             } else {
               set({
