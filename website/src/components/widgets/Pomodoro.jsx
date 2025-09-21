@@ -73,7 +73,7 @@ export default function Pomodoro() {
               textAnchor="middle"
               dominantBaseline="middle"
               fill="currentColor"
-              className="text-black dark:text-white"
+              className="text-foreground"
             >
               {formatted}
             </text>

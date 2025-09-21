@@ -10,8 +10,8 @@ import {
   CardContent,
 } from "@/components/ui/8bit/card";
 import RetroMusicPlayer from "@/components/MusicPlayer";
+import Quote from "@/components/widgets/Quote";
 import tracks from "@/data/songs";
-import Quote from "./Quote";
 
 const Home = () => {
   const [date, setDate] = useState(new Date());
