@@ -1,5 +1,4 @@
 import { useState, Suspense } from "react";
-import { Card, CardContent } from "@/components/ui/8bit/card";
 import Onboarding from "@/components/Onboarding/Onboarding";
 import ErrorBoundary from "@/components/sections/ErrorBoundary";
 import Dock from "@/components/Dock";
@@ -32,26 +31,20 @@ const Content = () => {
         >
           {/* Main Widget Area */}
           <div className="flex-1">
-            <Card className="h-full">
-              <CardContent>
-                {(() => {
-                  const active = widgets.find((w) => w.id === activeWidget);
-                  if (!active) return null;
-                  const ActiveComponent = active.component;
-                  return (
-                    <div className="h-full" key={active.id}>
-                      <ErrorBoundary>
-                        <Suspense
-                          fallback={<div className="p-4">Loading…</div>}
-                        >
-                          <ActiveComponent />
-                        </Suspense>
-                      </ErrorBoundary>
-                    </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
+            {(() => {
+              const active = widgets.find((w) => w.id === activeWidget);
+              if (!active) return null;
+              const ActiveComponent = active.component;
+              return (
+                <div className="h-full" key={active.id}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div className="p-4">Loading…</div>}>
+                      <ActiveComponent />
+                    </Suspense>
+                  </ErrorBoundary>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>
