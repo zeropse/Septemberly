@@ -4,12 +4,18 @@ import { persist } from "zustand/middleware";
 export const useThemeStore = create(
   persist(
     (set) => ({
-      theme: "system",
-      setTheme: (theme) => set({ theme }),
+      themeVariant: "cassette",
+      mode: "system",
+      setThemeVariant: (themeVariant) => set({ themeVariant }),
+      setMode: (mode) => set({ mode }),
     }),
     {
       name: "septemberly-ui-theme",
-      partialize: (state) => ({ theme: state.theme }),
+      partialize: (state) => ({
+        themeVariant: state.themeVariant,
+        mode: state.mode,
+        theme: state.theme,
+      }),
     }
   )
 );

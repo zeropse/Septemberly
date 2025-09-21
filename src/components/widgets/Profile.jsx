@@ -21,6 +21,7 @@ import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/8bit/button";
 import { Input } from "@/components/ui/8bit/input";
 import { Textarea } from "@/components/ui/8bit/textarea";
+import { ThemeSwitcher } from "@/style/theme-switcher";
 
 function getInitials(name) {
   if (!name) return "?";
@@ -86,39 +87,42 @@ export default function ProfileCard() {
           </p>
         )}
       </CardContent>
-      <CardFooter className="text-xs text-gray-400 text-center">
-        {isEditing ? (
-          <div className="w-full flex gap-4">
+      <CardFooter className="text-center flex flex-col gap-5">
+        <div>
+          {isEditing ? (
+            <div className="w-full flex gap-4">
+              <Button
+                onClick={() => {
+                  clearProfileDraft();
+                  setIsEditing(false);
+                }}
+                className="w-1/2 cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  commitProfileDraft();
+                  setIsEditing(false);
+                }}
+                className="w-1/2 cursor-pointer"
+              >
+                Save
+              </Button>
+            </div>
+          ) : (
             <Button
               onClick={() => {
-                commitProfileDraft();
-                setIsEditing(false);
+                setProfileDraft({ name, about, trait });
+                setIsEditing(true);
               }}
-              className="w-1/2 cursor-pointer"
+              className="w-full cursor-pointer"
             >
-              Save
+              Edit Profile
             </Button>
-            <Button
-              onClick={() => {
-                clearProfileDraft();
-                setIsEditing(false);
-              }}
-              className="w-1/2 cursor-pointer"
-            >
-              Cancel
-            </Button>
-          </div>
-        ) : (
-          <Button
-            onClick={() => {
-              setProfileDraft({ name, about, trait });
-              setIsEditing(true);
-            }}
-            className="w-full cursor-pointer"
-          >
-            Edit
-          </Button>
-        )}
+          )}
+        </div>
+        <ThemeSwitcher />
       </CardFooter>
     </Card>
   );
