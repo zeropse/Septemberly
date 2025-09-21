@@ -1,8 +1,11 @@
-import Notes from "@/components/widgets/Notes";
-import Pomodoro from "@/components/widgets/Pomodoro";
-import Quote from "@/components/widgets/Quote";
-import TodoList from "@/components/widgets/TodoList";
-import WeatherWidget from "@/components/widgets/WeatherWidget";
+import React from "react";
+const Notes = React.lazy(() => import("@/components/widgets/Notes"));
+const Pomodoro = React.lazy(() => import("@/components/widgets/Pomodoro"));
+const Quote = React.lazy(() => import("@/components/widgets/Quote"));
+const TodoList = React.lazy(() => import("@/components/widgets/TodoList"));
+const WeatherWidget = React.lazy(() =>
+  import("@/components/widgets/WeatherWidget")
+);
 
 const widgets = [
   {
@@ -41,4 +44,5 @@ const widgets = [
     color: "bg-accent",
   },
 ];
+
 export default widgets;

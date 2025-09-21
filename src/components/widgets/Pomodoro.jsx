@@ -12,31 +12,15 @@ import {
   usePomodoroFormattedTime,
 } from "@/stores/pomodoroStore";
 
-// useInterval hook
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  useEffect(() => {
-    if (delay === null) return;
-    const id = setInterval(() => savedCallback.current(), delay);
-    return () => clearInterval(id);
-  }, [delay]);
-}
-
 export default function Pomodoro() {
   const mode = usePomodoroStore((s) => s.mode);
-  const running = usePomodoroStore((s) => s.running);
   const sessions = usePomodoroStore((s) => s.sessions);
+  const running = usePomodoroStore((s) => s.running);
   const toggleTimer = usePomodoroStore((s) => s.toggleTimer);
   const resetTimer = usePomodoroStore((s) => s.resetTimer);
   const initializeFromStorage = usePomodoroStore(
     (s) => s.initializeFromStorage
   );
-  const tick = usePomodoroStore((s) => s.tick);
   const progress = usePomodoroProgress();
   const formatted = usePomodoroFormattedTime();
   const hasInitialized = useRef(false);
@@ -49,13 +33,6 @@ export default function Pomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useInterval(
-    () => {
-      tick();
-    },
-    running ? 1000 : null
-  );
-
   const progressColor = mode === "focus" ? "#0ea5e9" : "#22c55e";
 
   return (
@@ -65,13 +42,7 @@ export default function Pomodoro() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center">
-          <svg
-            onClick={toggleTimer}
-            width="180"
-            height="180"
-            viewBox="0 0 200 200"
-            className="mb-6 cursor-pointer"
-          >
+          <svg width="180" height="180" viewBox="0 0 200 200" className="mb-6">
             <circle
               cx="100"
               cy="100"
@@ -108,11 +79,26 @@ export default function Pomodoro() {
             </text>
           </svg>
 
-          <div className="text-base my-5 font-medium">
-            {mode === "focus" ? "Focus" : "Break"}
+          <div className="text-base my-2 font-medium text-center">
+            <p className="mb-2">
+              Currently: {mode === "focus" ? "Focus" : "Break"}
+            </p>
+            <p>
+              {mode === "focus"
+                ? "Kindly focus — minimize distractions and work for your session."
+                : "Kindly take a break — relax and recharge for a few minutes."}
+            </p>
           </div>
 
-          <div className="mb-6 w-full">
+          <div className="w-3/4 gap-5 flex flex-col my-5">
+            <Button
+              onClick={toggleTimer}
+              variant={running ? "secondary" : "primary"}
+              className="w-full py-2 text-sm cursor-pointer"
+            >
+              {running ? "Pause" : "Start"}
+            </Button>
+
             <Button
               onClick={resetTimer}
               variant="destructive"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/8bit/card";
 import Onboarding from "@/components/Onboarding/Onboarding";
 import ErrorBoundary from "@/components/sections/ErrorBoundary";
@@ -23,26 +23,33 @@ const Content = () => {
 
       {/* Desktop/Laptop Layout */}
       <div className="hidden lg:block">
-        <div className="flex gap-10">
+        <div
+          className={`flex gap-10 ${
+            shouldShowOnboarding
+              ? "pointer-events-none select-none filter blur-sm opacity-90"
+              : ""
+          }`}
+        >
           {/* Main Widget Area */}
           <div className="flex-1">
             <Card className="h-full">
               <CardContent>
-                {widgets.map((widget) => {
-                  const WidgetComponent = widget.component;
+                {(() => {
+                  const active = widgets.find((w) => w.id === activeWidget);
+                  if (!active) return null;
+                  const ActiveComponent = active.component;
                   return (
-                    <div
-                      key={widget.id}
-                      className={`h-full ${
-                        activeWidget === widget.id ? "block" : "hidden"
-                      }`}
-                    >
+                    <div className="h-full" key={active.id}>
                       <ErrorBoundary>
-                        <WidgetComponent />
+                        <Suspense
+                          fallback={<div className="p-4">Loading…</div>}
+                        >
+                          <ActiveComponent />
+                        </Suspense>
                       </ErrorBoundary>
                     </div>
                   );
-                })}
+                })()}
               </CardContent>
             </Card>
           </div>
@@ -56,7 +63,15 @@ const Content = () => {
         </p>
       </div>
 
-      <Dock />
+      <div
+        className={
+          shouldShowOnboarding
+            ? "pointer-events-none select-none filter blur-sm opacity-90"
+            : ""
+        }
+      >
+        <Dock />
+      </div>
     </>
   );
 };

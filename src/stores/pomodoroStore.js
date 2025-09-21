@@ -122,6 +122,13 @@ export const usePomodoroStore = create(
     }),
     {
       name: "pomodoro-storage",
+      partialize: (state) => ({
+        mode: state.mode,
+        secondsLeft: state.secondsLeft,
+        running: state.running,
+        lastUpdated: state.lastUpdated,
+        sessions: state.sessions,
+      }),
     }
   )
 );
