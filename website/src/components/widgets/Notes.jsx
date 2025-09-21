@@ -6,9 +6,9 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogDescription,
   DialogTitle,
 } from "@/components/ui/8bit/dialog";
+import { toast } from "@/components/ui/8bit/toast";
 
 export default function Notes() {
   const { addNote, updateNote, deleteNote } = useNotesStore();
@@ -59,6 +59,7 @@ export default function Notes() {
 
   const handleDelete = (id) => {
     deleteNote(id);
+    toast("Note Deleted");
     setDeleteDialogId(null);
   };
 
@@ -77,11 +78,6 @@ export default function Notes() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingId ? "Edit Note" : "New Note"}</DialogTitle>
-            <DialogDescription>
-              {editingId
-                ? "Edit your note content and title."
-                : "Create a new note to store your thoughts."}
-            </DialogDescription>
           </DialogHeader>
           <CreateNote
             title={title}

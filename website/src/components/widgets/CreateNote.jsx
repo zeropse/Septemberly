@@ -1,12 +1,7 @@
 import { Input } from "@/components/ui/8bit/input";
 import { Textarea } from "@/components/ui/8bit/textarea";
 import { Button } from "@/components/ui/8bit/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/8bit/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/8bit/card";
 
 export default function CreateNote({
   title,
@@ -26,9 +21,6 @@ export default function CreateNote({
 
   return (
     <Card>
-      <CardHeader>
-        <h2 className="text-lg font-semibold">Cozy Notes</h2>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-2">
           <Input
