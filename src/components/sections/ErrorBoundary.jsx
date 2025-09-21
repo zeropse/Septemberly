@@ -1,6 +1,12 @@
 import React from "react";
 import { Button } from "@/components/ui/8bit/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/8bit/card";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -38,21 +44,21 @@ class ErrorBoundary extends React.Component {
                 {this.state.error && this.state.error.toString()}
                 {this.state.info && this.state.info.componentStack}
               </details>
-              <div className="flex gap-4 justify-center">
+              <CardFooter className="flex gap-5 justify-center flex-col">
                 <Button
                   onClick={() => window.location.reload()}
-                  className="cursor-pointer"
+                  className="cursor-pointer w-full"
                 >
                   Reload page
                 </Button>
                 <Button
                   variant="secondary"
                   onClick={this.reset}
-                  className="cursor-pointer"
+                  className="cursor-pointer w-full"
                 >
                   Dismiss
                 </Button>
-              </div>
+              </CardFooter>
             </CardContent>
           </Card>
         </div>

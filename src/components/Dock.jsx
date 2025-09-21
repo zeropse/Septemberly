@@ -1,15 +1,18 @@
 import React from "react";
 import widgets from "@/data/widgets";
 import { FloatingDock } from "@/components/ui/floating-dock";
+import { useAppStore } from "@/stores/appStore";
 
-const Dock = ({ active, setActive }) => {
+const Dock = () => {
+  const { activeWidget, setActiveWidget } = useAppStore();
+
   const items = widgets.map((w) => ({
     title: w.label,
-    icon: <span className="text-xl">{w.emoji}</span>,
+    icon: <span className="text-2xl">{w.emoji}</span>,
     href: "#",
-    onClick: () => setActive(w.id),
+    onClick: () => setActiveWidget(w.id),
     color: w.color,
-    isActive: active === w.id,
+    isActive: activeWidget === w.id,
   }));
 
   return (

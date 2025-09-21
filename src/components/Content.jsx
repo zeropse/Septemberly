@@ -1,22 +1,22 @@
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/8bit/card";
 import Onboarding from "@/components/Onboarding/Onboarding";
 import ErrorBoundary from "@/components/sections/ErrorBoundary";
 import Dock from "@/components/Dock";
-import { Card, CardContent } from "@/components/ui/8bit/card";
 import widgets from "@/data/widgets";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { useAppStore } from "@/stores/appStore";
 
-const Content = ({ active, setActive }) => {
-  active = active || widgets[0].id;
-  const [profile] = useLocalStorage("Profile", null);
-  const [onboarded, setOnboarded] = useState(() => Boolean(profile));
+const Content = () => {
+  const { activeWidget, onboarded } = useAppStore();
+  const [showOnboarding, setShowOnboarding] = useState(() => !onboarded);
+  const shouldShowOnboarding = !onboarded && showOnboarding;
 
   return (
     <>
-      {!onboarded && (
+      {shouldShowOnboarding && (
         <Onboarding
           onFinish={() => {
-            setOnboarded(true);
+            setShowOnboarding(false);
           }}
         />
       )}
@@ -34,7 +34,7 @@ const Content = ({ active, setActive }) => {
                     <div
                       key={widget.id}
                       className={`h-full ${
-                        active === widget.id ? "block" : "hidden"
+                        activeWidget === widget.id ? "block" : "hidden"
                       }`}
                     >
                       <ErrorBoundary>
@@ -56,7 +56,7 @@ const Content = ({ active, setActive }) => {
         </p>
       </div>
 
-      <Dock active={active} setActive={setActive} />
+      <Dock />
     </>
   );
 };

@@ -53,7 +53,7 @@ const FloatingDockMobile = ({ items, className }) => {
                     "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200",
                     item.isActive && item.color
                       ? item.color
-                      : "bg-gray-50 dark:bg-neutral-900"
+                      : "bg-card border border-border/50"
                   )}
                   onClick={(e) => {
                     if (item.onClick) {
@@ -79,9 +79,9 @@ const FloatingDockMobile = ({ items, className }) => {
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-800"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-card border border-border/50 shadow-md"
       >
-        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
+        <IconLayoutNavbarCollapse className="h-5 w-5 text-muted-foreground" />
       </button>
     </div>
   );
@@ -94,7 +94,7 @@ const FloatingDockDesktop = ({ items, className }) => {
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
+        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50 px-4 pb-3 md:flex shadow-lg",
         className
       )}
     >
@@ -166,7 +166,7 @@ function IconContainer({
       return color.replace("/10", "/20").replace("/20", "/30");
     } else {
       // Default state: use the original neutral colors
-      return "bg-gray-200 dark:bg-neutral-800";
+      return "bg-muted border border-border";
     }
   };
 
@@ -204,7 +204,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs whitespace-pre text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
+              className="absolute -top-8 left-1/2 w-fit rounded-md border border-border bg-popover px-2 py-0.5 text-xs whitespace-pre text-popover-foreground shadow-md"
             >
               {title}
             </motion.div>

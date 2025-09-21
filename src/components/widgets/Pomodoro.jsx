@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Card,
   CardTitle,
@@ -6,23 +6,11 @@ import {
   CardContent,
 } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-import useLocalStorage from "@/hooks/useLocalStorage";
-
-// Config constants
-const POMODORO = {
-  FOCUS: 25 * 60,
-  BREAK: 5 * 60,
-};
-
-function formatTime(s) {
-  const m = Math.floor(s / 60)
-    .toString()
-    .padStart(2, "0");
-  const sec = Math.floor(s % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${m}:${sec}`;
-}
+import {
+  usePomodoroStore,
+  usePomodoroProgress,
+  usePomodoroFormattedTime,
+} from "@/stores/pomodoroStore";
 
 // useInterval hook
 function useInterval(callback, delay) {
@@ -40,108 +28,33 @@ function useInterval(callback, delay) {
 }
 
 export default function Pomodoro() {
-  // Load saved state from localStorage with defaults
-  const [pomodoroState, setPomodoroState] = useLocalStorage("pomodoro", {
-    mode: "focus",
-    secondsLeft: POMODORO.FOCUS,
-    running: false,
-    lastUpdated: Date.now(),
-  });
-
-  const [sessions, setSessions] = useLocalStorage("pomodoro-sessions", 0);
-
-  // Initialize state from saved data
-  const [mode, setMode] = useState(pomodoroState.mode);
-  const [secondsLeft, setSecondsLeft] = useState(pomodoroState.secondsLeft);
-  const [running, setRunning] = useState(false);
+  const mode = usePomodoroStore((s) => s.mode);
+  const running = usePomodoroStore((s) => s.running);
+  const sessions = usePomodoroStore((s) => s.sessions);
+  const toggleTimer = usePomodoroStore((s) => s.toggleTimer);
+  const resetTimer = usePomodoroStore((s) => s.resetTimer);
+  const initializeFromStorage = usePomodoroStore(
+    (s) => s.initializeFromStorage
+  );
+  const tick = usePomodoroStore((s) => s.tick);
+  const progress = usePomodoroProgress();
+  const formatted = usePomodoroFormattedTime();
   const hasInitialized = useRef(false);
 
-  // Calculate time elapsed since last update when component mounts
   useEffect(() => {
-    if (
-      !hasInitialized.current &&
-      pomodoroState.running &&
-      pomodoroState.lastUpdated
-    ) {
-      const now = Date.now();
-      const elapsedSeconds = Math.floor(
-        (now - pomodoroState.lastUpdated) / 1000
-      );
-
-      if (elapsedSeconds > 0) {
-        const newSecondsLeft = Math.max(
-          0,
-          pomodoroState.secondsLeft - elapsedSeconds
-        );
-        setSecondsLeft(newSecondsLeft);
-
-        if (newSecondsLeft === 0) {
-          if (pomodoroState.mode === "focus") {
-            setSessions((s) => s + 1);
-            setMode("break");
-            setSecondsLeft(POMODORO.BREAK);
-          } else {
-            setMode("focus");
-            setSecondsLeft(POMODORO.FOCUS);
-          }
-          setRunning(false);
-        } else {
-          // Restore running state only if timer hasn't finished
-          setRunning(pomodoroState.running);
-        }
-      } else {
-        // No time elapsed, just restore the running state
-        setRunning(pomodoroState.running);
-      }
+    if (!hasInitialized.current) {
+      initializeFromStorage();
+      hasInitialized.current = true;
     }
-    hasInitialized.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save state whenever it changes, but only after initialization
-  useEffect(() => {
-    if (hasInitialized.current) {
-      setPomodoroState({
-        mode,
-        secondsLeft,
-        running,
-        lastUpdated: Date.now(),
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, secondsLeft, running]);
-
-  // Timer logic
   useInterval(
     () => {
-      if (!running) return;
-
-      if (secondsLeft > 0) {
-        setSecondsLeft((s) => s - 1);
-      } else {
-        if (mode === "focus") {
-          setSessions((s) => s + 1);
-          setMode("break");
-          setSecondsLeft(POMODORO.BREAK);
-        } else {
-          setMode("focus");
-          setSecondsLeft(POMODORO.FOCUS);
-        }
-        setRunning(false);
-      }
+      tick();
     },
     running ? 1000 : null
   );
-
-  const toggleRunning = () => setRunning((r) => !r);
-  const reset = () => {
-    setRunning(false);
-    setMode("focus");
-    setSecondsLeft(POMODORO.FOCUS);
-  };
-
-  const total = mode === "focus" ? POMODORO.FOCUS : POMODORO.BREAK;
-  const progress = Math.max(0, Math.min(1, 1 - secondsLeft / total));
 
   const progressColor = mode === "focus" ? "#0ea5e9" : "#22c55e";
 
@@ -153,7 +66,7 @@ export default function Pomodoro() {
       <CardContent>
         <div className="flex flex-col items-center">
           <svg
-            onClick={toggleRunning}
+            onClick={toggleTimer}
             width="180"
             height="180"
             viewBox="0 0 200 200"
@@ -191,7 +104,7 @@ export default function Pomodoro() {
               fill="currentColor"
               className="text-black dark:text-white"
             >
-              {formatTime(secondsLeft)}
+              {formatted}
             </text>
           </svg>
 
@@ -201,7 +114,7 @@ export default function Pomodoro() {
 
           <div className="mb-6 w-full">
             <Button
-              onClick={reset}
+              onClick={resetTimer}
               variant="destructive"
               className="w-full py-2 text-sm cursor-pointer"
             >

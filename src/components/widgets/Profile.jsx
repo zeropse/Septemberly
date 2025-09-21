@@ -10,28 +10,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/8bit/card";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import {
+  useProfileName,
+  useProfileTrait,
+  useProfileAbout,
+  useAppStore,
+} from "@/stores/appStore";
+import { useState } from "react";
+import { CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/8bit/button";
+import { Input } from "@/components/ui/8bit/input";
+import { Textarea } from "@/components/ui/8bit/textarea";
 
 function getInitials(name) {
   if (!name) return "?";
-  const parts = name.trim().split(/\s+/);
-  const initials = parts
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("");
-  return initials || "?";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
 export default function ProfileCard() {
-  const [profile] = useLocalStorage("Profile", {
-    name: "Name",
-    trait: "Autumn",
-    about: "Need Sleep",
-  });
+  const name = useProfileName();
+  const trait = useProfileTrait();
+  const about = useProfileAbout();
+  const profileDraft = useAppStore((s) => s.profileDraft);
+  const setProfileDraft = useAppStore((s) => s.setProfileDraft);
+  const updateProfileDraft = useAppStore((s) => s.updateProfileDraft);
+  const clearProfileDraft = useAppStore((s) => s.clearProfileDraft);
+  const commitProfileDraft = useAppStore((s) => s.commitProfileDraft);
 
-  const name = profile.name || "Name";
-  const trait = profile.trait || "Autumn";
-  const about = profile.about || "Need Sleep";
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <Card className="min-w-sm max-w-md">
@@ -40,10 +49,7 @@ export default function ProfileCard() {
           className="size-20"
           variant={trait === "retro" ? "retro" : "pixel"}
         >
-          <AvatarImage
-            src="https://8bitcn.com/images/pixelized-8bitcnorc.jpg"
-            alt="ProfileAvatar"
-          />
+          <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
           <AvatarFallback>{getInitials(name)}</AvatarFallback>
         </Avatar>
 
@@ -51,13 +57,69 @@ export default function ProfileCard() {
           <h3>{name}</h3>
         </CardTitle>
 
-        <Badge>{trait === "none" ? "None" : trait}</Badge>
+        <Badge>
+          {trait === "none"
+            ? "None"
+            : trait.charAt(0).toUpperCase() + trait.slice(1)}
+        </Badge>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4">
-        <p className="text-sm text-muted-foreground text-center w-3/4 mx-auto">
-          {about}
-        </p>
+        {isEditing ? (
+          <div className="w-full flex flex-col items-center gap-4">
+            <Input
+              value={profileDraft?.name ?? name}
+              onChange={(e) => updateProfileDraft({ name: e.target.value })}
+              placeholder="Name"
+              className="w-full rounded"
+            />
+            <Textarea
+              value={profileDraft?.about ?? about}
+              onChange={(e) => updateProfileDraft({ about: e.target.value })}
+              className="w-full rounded"
+              rows={3}
+              placeholder="About"
+            />
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground text-center w-3/4 mx-auto">
+            {about}
+          </p>
+        )}
       </CardContent>
+      <CardFooter className="text-xs text-gray-400 text-center">
+        {isEditing ? (
+          <div className="w-full flex gap-4">
+            <Button
+              onClick={() => {
+                commitProfileDraft();
+                setIsEditing(false);
+              }}
+              className="w-1/2 cursor-pointer"
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => {
+                clearProfileDraft();
+                setIsEditing(false);
+              }}
+              className="w-1/2 cursor-pointer"
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => {
+              setProfileDraft({ name, about, trait });
+              setIsEditing(true);
+            }}
+            className="w-full cursor-pointer"
+          >
+            Edit
+          </Button>
+        )}
+      </CardFooter>
     </Card>
   );
 }

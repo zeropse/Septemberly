@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -9,14 +9,6 @@ import { Input } from "@/components/ui/8bit/input";
 import { Textarea } from "@/components/ui/8bit/textarea";
 import { Button } from "@/components/ui/8bit/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/8bit/select";
-import { Badge } from "@/components/ui/8bit/badge";
-import {
   Dialog,
   DialogContent,
   DialogFooter,
@@ -24,29 +16,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/8bit/dialog";
-import useLocalStorage from "@/hooks/useLocalStorage";
-
-const defaultCategories = ["personal", "study", "ideas"];
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
-}
+import { useNotesStore } from "@/stores/notesStore";
 
 export default function Notes() {
-  const [notes, setNotes] = useLocalStorage("notes", []);
-
+  const { addNote, updateNote, deleteNote } = useNotesStore();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState(defaultCategories[0]);
   const [editingId, setEditingId] = useState(null);
-  const [filter, setFilter] = useState("all");
-  const [query, setQuery] = useState("");
   const [deleteDialogId, setDeleteDialogId] = useState(null);
 
   const resetForm = () => {
     setTitle("");
     setContent("");
-    setCategory(defaultCategories[0]);
     setEditingId(null);
   };
 
@@ -55,29 +36,15 @@ export default function Notes() {
     if (!title.trim() && !content.trim()) return;
 
     if (editingId) {
-      setNotes((prev) =>
-        prev.map((n) =>
-          n.id === editingId
-            ? {
-                ...n,
-                title: title.trim(),
-                content: content.trim(),
-                category,
-                updatedAt: Date.now(),
-              }
-            : n
-        )
-      );
-    } else {
-      const newNote = {
-        id: uid(),
+      updateNote(editingId, {
         title: title.trim(),
         content: content.trim(),
-        category,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-      setNotes((prev) => [newNote, ...prev]);
+      });
+    } else {
+      addNote({
+        title: title.trim(),
+        content: content.trim(),
+      });
     }
 
     resetForm();
@@ -87,26 +54,22 @@ export default function Notes() {
     setEditingId(note.id);
     setTitle(note.title || "");
     setContent(note.content || "");
-    setCategory(note.category || defaultCategories[0]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = (id) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id));
+    deleteNote(id);
     setDeleteDialogId(null);
   };
 
-  const filtered = notes.filter((n) => {
-    if (filter !== "all" && n.category !== filter) return false;
-    if (query) {
-      const q = query.toLowerCase();
-      return (
-        (n.title || "").toLowerCase().includes(q) ||
-        (n.content || "").toLowerCase().includes(q)
-      );
-    }
-    return true;
-  });
+  const notes = useNotesStore((s) => s.notes);
+  const filtered = useMemo(() => {
+    return [...(notes || [])].sort((a, b) => {
+      const ta = new Date(a.updatedAt || a.createdAt).getTime();
+      const tb = new Date(b.updatedAt || b.createdAt).getTime();
+      return tb - ta;
+    });
+  }, [notes]);
 
   return (
     <div className="space-y-4">
@@ -121,137 +84,127 @@ export default function Notes() {
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="min-w-0 w-full break-words whitespace-normal"
             />
             <Textarea
               placeholder="Write something..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={4}
+              className="min-w-0 w-full break-words whitespace-normal"
             />
-            <div className="flex items-center justify-between gap-2">
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {defaultCategories.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex gap-2">
-                {editingId && (
+            <div className="flex items-center justify-between gap-4 mt-6">
+              {editingId ? (
+                <>
                   <Button
                     variant="outline"
                     onClick={resetForm}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-1/2"
                   >
                     Cancel
                   </Button>
-                )}
+                  <Button
+                    type="submit"
+                    variant="default"
+                    className="cursor-pointer w-1/2"
+                  >
+                    Update
+                  </Button>
+                </>
+              ) : (
                 <Button
                   type="submit"
                   variant="default"
-                  className="cursor-pointer"
+                  className="cursor-pointer w-full"
                 >
-                  {editingId ? "Update" : "Add Note"}
+                  Add Note
                 </Button>
-              </div>
+              )}
             </div>
           </form>
         </CardContent>
       </Card>
 
-      {/* Filter & Search */}
-      <div className="flex items-center justify-between gap-2">
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="Filter" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            {defaultCategories.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Input
-          placeholder="Search notes..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-
       {/* Notes List */}
-      <div className="space-y-2">
-        {filtered.length === 0 && (
-          <p className="text-sm text-gray-400 text-center">No notes yet.</p>
-        )}
-        {filtered.map((n) => (
-          <Card key={n.id}>
-            <CardHeader className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <strong>{n.title || "(untitled)"}</strong>
-                <Badge variant="secondary">{n.category}</Badge>
-              </div>
-              <div className="text-xs text-gray-400">
-                {new Date(n.updatedAt || n.createdAt).toLocaleString()}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-wrap">{n.content}</p>
-            </CardContent>
-            <CardFooter className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => handleEdit(n)}
-                className="cursor-pointer"
-              >
-                Edit
-              </Button>
-              <Dialog
-                open={deleteDialogId === n.id}
-                onOpenChange={setDeleteDialogId}
-              >
-                <DialogTrigger asChild>
+      <Card>
+        <CardContent>
+          <div className="space-y-2">
+            {filtered.length === 0 && (
+              <p className="text-sm text-gray-400 text-center">No notes yet.</p>
+            )}
+            {filtered.map((n) => (
+              <Card key={n.id}>
+                <CardHeader className="flex items-center justify-between min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <strong className="break-words whitespace-normal max-w-full">
+                      {n.title || "(Untitled)"}
+                    </strong>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {new Date(n.updatedAt || n.createdAt).toLocaleString()}
+                    {n.updatedAt && n.createdAt && n.updatedAt > n.createdAt ? (
+                      <span className="ml-2 text-[11px] text-gray-500">
+                        (edited)
+                      </span>
+                    ) : (
+                      <span className="ml-2">&nbsp;</span>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="whitespace-pre-wrap break-words">{n.content}</p>
+                </CardContent>
+                <CardFooter className="flex gap-2">
                   <Button
                     size="sm"
-                    variant="destructive"
-                    className="cursor-pointer"
+                    onClick={() => handleEdit(n)}
+                    className="cursor-pointer w-1/2"
                   >
-                    Delete
+                    Edit
                   </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Delete this note?</DialogTitle>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteDialogId(null)}
-                      className="cursor-pointer"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDelete(n.id)}
-                      className="cursor-pointer"
-                    >
-                      Delete
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                  <Dialog
+                    open={deleteDialogId === n.id}
+                    onOpenChange={(open) =>
+                      open ? setDeleteDialogId(n.id) : setDeleteDialogId(null)
+                    }
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="cursor-pointer w-1/2"
+                      >
+                        Delete
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Delete this note?</DialogTitle>
+                      </DialogHeader>
+                      <DialogFooter className="flex gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => setDeleteDialogId(null)}
+                          className="cursor-pointer w-1/2"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(n.id)}
+                          className="cursor-pointer w-1/2"
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -14,9 +14,20 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/8bit/avatar";
+import { useProfileName } from "@/stores/appStore";
 import { Separator } from "@/components/ui/8bit/separator";
 
 const Header = () => {
+  const profileName = useProfileName();
+
+  const initials = (() => {
+    if (!profileName) return "?";
+    const parts = profileName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  })();
+
   return (
     <>
       <header className="flex items-center justify-between mb-6">
@@ -35,11 +46,8 @@ const Header = () => {
                 className="p-0 rounded-full cursor-pointer"
               >
                 <Avatar className="size-9" variant="pixel">
-                  <AvatarImage
-                    src="https://8bitcn.com/images/pixelized-8bitcnorc.jpg"
-                    alt="ProfileAvatar"
-                  />
-                  <AvatarFallback>PA</AvatarFallback>
+                  <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </Button>
             </DialogTrigger>

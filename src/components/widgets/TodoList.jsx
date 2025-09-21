@@ -10,65 +10,55 @@ import { Button } from "@/components/ui/8bit/button";
 import { Checkbox } from "@/components/ui/8bit/checkbox";
 import { toast } from "@/components/ui/8bit/toast";
 import { Input } from "@/components/ui/8bit/input";
-import useLocalStorage from "@/hooks/useLocalStorage";
-
-const MAX_TODOS = 10;
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
-}
+import { useTodoStore, useTodoStats, useMaxTodos } from "@/stores/todoStore";
 
 export default function TodoList() {
-  const [tasks, setTasks] = useLocalStorage("todos", []);
+  const tasks = useTodoStore((state) => state.tasks);
+  const addTask = useTodoStore((state) => state.addTask);
+  const toggleTask = useTodoStore((state) => state.toggleTask);
+  const deleteTask = useTodoStore((state) => state.deleteTask);
+  const maxTodos = useMaxTodos();
+  const stats = useTodoStats();
 
   const [text, setText] = useState("");
   const inputRef = useRef(null);
 
-  const addTask = useCallback(
+  const handleAddTask = useCallback(
     (e) => {
       e.preventDefault();
       if (!text.trim()) return;
 
-      if (tasks.length >= MAX_TODOS) {
-        toast(`Todo limit reached. Max ${MAX_TODOS} tasks allowed.`);
+      const success = addTask(text);
+      if (!success) {
+        toast(`Todo limit reached. Max ${maxTodos} tasks allowed.`);
         return;
       }
 
-      const newTask = {
-        id: uid(),
-        text: text.trim(),
-        done: false,
-      };
-
-      setTasks((prev) => [newTask, ...prev]);
       setText("");
       inputRef.current?.focus();
     },
-    [text, tasks, setTasks]
+    [text, addTask, maxTodos]
   );
 
-  const toggle = useCallback(
+  const handleToggle = useCallback(
     (id) => {
-      setTasks((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
-      );
+      toggleTask(id);
     },
-    [setTasks]
+    [toggleTask]
   );
 
-  const remove = useCallback(
+  const handleRemove = useCallback(
     (id) => {
       const taskToRemove = tasks.find((t) => t.id === id);
       if (taskToRemove) {
         toast(`Task "${taskToRemove.text}" deleted.`);
       }
-      setTasks((prev) => prev.filter((t) => t.id !== id));
+      deleteTask(id);
     },
-    [tasks, setTasks]
+    [tasks, deleteTask]
   );
 
-  const total = tasks.length;
-  const completed = tasks.filter((t) => t.done).length;
+  const { total, completed } = stats;
 
   return (
     <Card>
@@ -80,7 +70,7 @@ export default function TodoList() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={addTask} className="flex gap-4">
+        <form onSubmit={handleAddTask} className="flex gap-4 mb-5">
           <Input
             ref={inputRef}
             aria-label="New task"
@@ -103,8 +93,9 @@ export default function TodoList() {
             <li key={t.id} className="mt-2 flex items-center gap-3 p-2 min-w-0">
               <Checkbox
                 checked={t.done}
-                onCheckedChange={() => toggle(t.id)}
+                onCheckedChange={() => handleToggle(t.id)}
                 aria-label={`Mark ${t.text} as ${t.done ? "not done" : "done"}`}
+                className="cursor-pointer"
               />
               <div className="flex-1 min-w-0">
                 <span
@@ -118,7 +109,7 @@ export default function TodoList() {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => remove(t.id)}
+                onClick={() => handleRemove(t.id)}
                 className="cursor-pointer"
               >
                 Delete

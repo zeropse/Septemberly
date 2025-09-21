@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import quotes from "@/data/quotes.json";
 import {
   Card,
@@ -8,44 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-import useLocalStorage from "@/hooks/useLocalStorage";
-
-function getRandomQuote(exclude) {
-  let newQuote;
-  do {
-    newQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  } while (quotes.length > 1 && newQuote.text === exclude?.text);
-  return newQuote;
-}
-
-function todayString() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { useQuoteStore } from "@/stores/quoteStore";
 
 export default function Quote() {
-  const [quote, setQuote] = useState(null);
-  const [dailyQuote, setDailyQuote] = useLocalStorage("dailyQuote", null);
+  const { quote, loadDailyQuote, refreshQuote } = useQuoteStore();
 
-  // Load daily quote
+  // Load daily quote on mount
   useEffect(() => {
-    const today = todayString();
-
-    if (dailyQuote?.date === today && dailyQuote?.quote) {
-      setQuote(dailyQuote.quote);
-    } else {
-      const newQuote = getRandomQuote(undefined);
-      const newDailyQuote = { date: today, quote: newQuote };
-      setDailyQuote(newDailyQuote);
-      setQuote(newQuote);
-    }
-  }, [dailyQuote, setDailyQuote]);
+    loadDailyQuote(quotes);
+  }, [loadDailyQuote]);
 
   const handleRefresh = () => {
-    const newQ = getRandomQuote(quote);
-    const today = todayString();
-    const newDailyQuote = { date: today, quote: newQ };
-    setDailyQuote(newDailyQuote);
-    setQuote(newQ);
+    refreshQuote(quotes);
   };
 
   if (!quote) {
