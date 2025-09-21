@@ -13,7 +13,7 @@ const Dock = ({ setActive }) => {
   return (
     <FloatingDock
       items={items}
-      desktopClassName="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50"
+      desktopClassName="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 border-1"
       mobileClassName="hidden"
     />
   );

@@ -140,6 +140,8 @@ export default function Pomodoro() {
               fontSize="24"
               textAnchor="middle"
               dominantBaseline="middle"
+              fill="currentColor"
+              className="text-black dark:text-white"
             >
               {formatTime(secondsLeft)}
             </text>
@@ -159,7 +161,7 @@ export default function Pomodoro() {
             </Button>
           </div>
 
-          <div className="mt-4 text-sm text-gray-400">
+          <div className="mt-4 text-sm text-gray-700 dark:text-gray-400">
             Sessions completed: {sessions}
           </div>
         </div>
