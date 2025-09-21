@@ -1,2 +1,2 @@
-- [ ] a homepage
+- [ ] a profile section to add option to change theme
 - [ ] if website okay then make electron GUI

@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/8bit/button";
 import { useQuoteStore } from "@/stores/quoteStore";
 
-export default function Quote() {
+export default function Quote({ className }) {
   const { quote, loadDailyQuote, refreshQuote } = useQuoteStore();
 
   // Load daily quote on mount
@@ -24,9 +24,9 @@ export default function Quote() {
 
   if (!quote) {
     return (
-      <Card>
+      <Card className={className}>
         <CardHeader>
-          <CardTitle className="font-semibold">Quote of the Day</CardTitle>
+          <CardTitle className="font-bold">Quote of the Day</CardTitle>
         </CardHeader>
         <CardContent className="text-gray-500">Loading...</CardContent>
       </Card>
@@ -34,17 +34,17 @@ export default function Quote() {
   }
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="font-semibold">Quote of the Day</CardTitle>
       </CardHeader>
 
-      <CardContent className="mb-10 flex flex-col justify-between min-h-[90px]">
+      <CardContent className="mb-10 flex flex-col justify-between min-h-[200px]">
         <div>
-          <blockquote className="italic leading-relaxed text-gray-400 mb-3">
+          <blockquote className="italic leading-relaxed text-gray-200 mb-5">
             “{quote.text}”
           </blockquote>
-          <div className="text-right mt-2 text-sm text-gray-600">
+          <div className="text-right mt-2 text-sm text-gray-300">
             — {quote.author}
           </div>
         </div>

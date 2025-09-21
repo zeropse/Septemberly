@@ -9,6 +9,9 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/8bit/card";
+import RetroMusicPlayer from "@/components/MusicPlayer";
+import tracks from "@/data/songs";
+import Quote from "./Quote";
 
 const Home = () => {
   const [date, setDate] = useState(new Date());
@@ -17,8 +20,8 @@ const Home = () => {
   const pomodoroSessions = usePomodoroStore((s) => s.sessions);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* Background video - fills the screen */}
+    <div className="relative min-h-screen w-full">
+      {/* Background video */}
       <video
         src="/bg.mp4"
         autoPlay
@@ -28,38 +31,57 @@ const Home = () => {
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden="true"
       />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
-      {/* Overlay to improve contrast */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+      {/* Main content */}
+      <main className="relative z-10 flex flex-col min-h-screen w-full p-6">
+        <div className="mx-auto w-full max-w-6xl rounded-lg bg-white/5 p-8 shadow-lg ring-1 ring-white/10 sm:p-12">
+          {/* Greeting */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-center sm:text-left">
+              Hello, {name}!
+            </h1>
+          </div>
 
-      {/* Centered content */}
-      <main className="relative z-10 flex min-h-screen w-full items-center justify-center p-6">
-        <div className="mx-auto w-full max-w-4xl rounded-lg bg-white/5 p-8 shadow-lg ring-1 ring-white/5 sm:p-12">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="flex flex-col items-start justify-center">
-              <h1 className="text-3xl font-bold text-white">Hello, {name}</h1>
-            </div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Task Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-2">
-                {stats.total === 0 ? (
-                  <p className="text-md">No new tasks</p>
-                ) : (
-                  <p className="text-md">
-                    Tasks pending - {stats.remaining}/{stats.total}
-                  </p>
-                )}
-                <p className="text-md">
-                  Total Pomodoro Sessions - {pomodoroSessions}
+          {/* Task Overview */}
+          <Card className="bg-white/10 p-4 my-2">
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold text-center sm:text-left">
+                Task Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2 text-center sm:text-left">
+              {stats.total === 0 ? (
+                <p>No new tasks</p>
+              ) : (
+                <p>
+                  Tasks pending: {stats.remaining}/{stats.total}
                 </p>
+              )}
+              <p>Total Pomodoro Sessions: {pomodoroSessions}</p>
+            </CardContent>
+          </Card>
+
+          {/* Calendar + Quote grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+            <div>
+              <Card className="bg-white/10 p-4 flex justify-center items-center">
+                <Calendar mode="single" selected={date} onSelect={setDate} />
+              </Card>
+            </div>
+
+            <div>
+              <Quote className="bg-white/10 p-4" />
+            </div>
+          </div>
+
+          {/* Music Player */}
+          <div className="w-full">
+            <Card className="bg-white/10 p-4 w-full">
+              <CardContent>
+                <RetroMusicPlayer tracks={tracks} />
               </CardContent>
             </Card>
-
-            <div className="flex items-center justify-center">
-              <Calendar mode="single" selected={date} onSelect={setDate} />
-            </div>
           </div>
         </div>
       </main>

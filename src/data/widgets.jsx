@@ -2,7 +2,6 @@ import React from "react";
 const Home = React.lazy(() => import("@/components/widgets/Home"));
 const Notes = React.lazy(() => import("@/components/widgets/Notes"));
 const Pomodoro = React.lazy(() => import("@/components/widgets/Pomodoro"));
-const Quote = React.lazy(() => import("@/components/widgets/Quote"));
 const TodoList = React.lazy(() => import("@/components/widgets/TodoList"));
 const WeatherWidget = React.lazy(() =>
   import("@/components/widgets/WeatherWidget")
@@ -116,26 +115,6 @@ const widgets = [
       >
         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path d="M10.04 4.305c2.195 -.667 4.615 -.224 6.36 1.176c1.386 1.108 2.188 2.686 2.252 4.34l.003 .212l.091 .003c2.3 .107 4.143 1.961 4.25 4.27l.004 .211c0 2.407 -1.885 4.372 -4.255 4.482l-.21 .005h-11.878l-.222 -.008c-2.94 -.11 -5.317 -2.399 -5.43 -5.263l-.005 -.216c0 -2.747 2.08 -5.01 4.784 -5.417l.114 -.016l.07 -.181c.663 -1.62 2.056 -2.906 3.829 -3.518l.244 -.08z" />
-      </svg>
-    ),
-    color: "bg-chart-3",
-  },
-  {
-    id: "quote",
-    label: "Quote",
-    component: Quote,
-    emoji: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        className="icon icon-tabler icons-tabler-filled icon-tabler-quote"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <path d="M9 5a2 2 0 0 1 2 2v6c0 3.13 -1.65 5.193 -4.757 5.97a1 1 0 1 1 -.486 -1.94c2.227 -.557 3.243 -1.827 3.243 -4.03v-1h-3a2 2 0 0 1 -1.995 -1.85l-.005 -.15v-3a2 2 0 0 1 2 -2z" />
-        <path d="M18 5a2 2 0 0 1 2 2v6c0 3.13 -1.65 5.193 -4.757 5.97a1 1 0 1 1 -.486 -1.94c2.227 -.557 3.243 -1.827 3.243 -4.03v-1h-3a2 2 0 0 1 -1.995 -1.85l-.005 -.15v-3a2 2 0 0 1 2 -2z" />
       </svg>
     ),
     color: "bg-chart-3",
