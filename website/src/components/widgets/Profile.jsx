@@ -22,6 +22,16 @@ import { Button } from "@/components/ui/8bit/button";
 import { Input } from "@/components/ui/8bit/input";
 import { Textarea } from "@/components/ui/8bit/textarea";
 import { ThemeSwitcher } from "@/style/theme-switcher";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/8bit/dialog";
 
 function getInitials(name) {
   if (!name) return "?";
@@ -42,6 +52,7 @@ export default function ProfileCard() {
   const commitProfileDraft = useAppStore((s) => s.commitProfileDraft);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   return (
     <Card className="min-w-sm max-w-md">
@@ -123,6 +134,88 @@ export default function ProfileCard() {
           )}
         </div>
         <ThemeSwitcher />
+        <Dialog
+          open={clearDialogOpen}
+          onOpenChange={(open) => setClearDialogOpen(open)}
+        >
+          <div>
+            <DialogTrigger asChild variant="destructive">
+              <Button className="w-full cursor-pointer">
+                Remove All Storages
+              </Button>
+            </DialogTrigger>
+          </div>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Clear all data?</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+              This will clear everything. You will be treated like a new user.
+            </DialogDescription>
+            <DialogFooter>
+              <div className="w-full flex gap-4">
+                <DialogClose asChild>
+                  <Button
+                    onClick={() => setClearDialogOpen(false)}
+                    className="w-1/2 cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        try {
+                          sessionStorage.clear();
+                        } catch {
+                          // ignore
+                        }
+
+                        try {
+                          localStorage.clear();
+                        } catch {
+                          // ignore
+                        }
+
+                        try {
+                          if (window.indexedDB && indexedDB.databases) {
+                            const dbs = await indexedDB.databases();
+                            for (const db of dbs) {
+                              if (db && db.name) {
+                                try {
+                                  await new Promise((res) => {
+                                    const req = indexedDB.deleteDatabase(
+                                      db.name
+                                    );
+                                    req.onsuccess = () => res(true);
+                                    req.onerror = () => res(false);
+                                    req.onblocked = () => res(false);
+                                  });
+                                } catch {
+                                  // ignore
+                                }
+                              }
+                            }
+                          }
+                        } catch {
+                          // ignore
+                        }
+                      } finally {
+                        window.location.reload();
+                      }
+                    }}
+                    className="w-1/2 cursor-pointer"
+                    variant="destructive"
+                  >
+                    Confirm
+                  </Button>
+                </DialogClose>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardFooter>
     </Card>
   );
