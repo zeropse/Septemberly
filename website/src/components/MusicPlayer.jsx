@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/8bit/card";
 import { Slider } from "@/components/ui/8bit/slider";
@@ -51,148 +52,156 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
   }, []);
 
   return (
-    <Card
-      className={cn("retro rounded-none p-0 w-full", className)}
-      font="retro"
-    >
-      <CardContent className="p-3">
-        <div className="flex items-center gap-3">
+    <Card className={cn("retro rounded-none p-4", className)} font="retro">
+      <CardContent className="p-1 flex flex-col items-center">
+        {/* SVG record at top */}
+        <motion.svg
+          width="120"
+          height="120"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+          className={playing ? "my-2 animate-spin" : "my-2"}
+          animate={playing ? { rotate: 360 } : { rotate: 0 }}
+          transition={
+            playing ? { repeat: Infinity, duration: 2, ease: "linear" } : {}
+          }
+        >
+          <circle cx="100" cy="100" r="95" fill="#23ede9" />
+          <circle cx="100" cy="100" r="40" fill="#8B0000" />
+          <circle cx="100" cy="100" r="42" stroke="#FF8C00" strokeWidth="2" />
+          <image href="/cat.png" x="65" y="65" height="70" width="70" />
+        </motion.svg>
+
+        {/* Time / duration */}
+        <div className="flex items-center gap-2 text-sm mb-5">
+          <span>{formatTime(progress || 0)}</span>
+          <span className="opacity-60">/</span>
+          <span>{formatTime(duration || 0)}</span>
+        </div>
+
+        {/* Progress slider */}
+        <div className="w-full mb-5">
+          <Slider
+            aria-label="Seek"
+            value={[progress || 0]}
+            min={0}
+            max={duration || 0}
+            onValueChange={(v) => {
+              const val = Array.isArray(v) ? v[0] : v;
+              requestSeek(Number(val));
+            }}
+            className="cursor-pointer"
+          />
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center justify-center gap-3 w-full mb-5">
+          <button
+            onClick={prev}
+            aria-label="Previous"
+            className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="icon icon-tabler icon-tabler-player-track-prev"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M20.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
+              <path d="M9.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
+            </svg>
+          </button>
+
+          <button
+            onClick={togglePlaying}
+            aria-label={playing ? "Pause" : "Play"}
+            className="retro bg-foreground/10 px-3 py-1 cursor-pointer"
+          >
+            {playing ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="icon icon-tabler icon-tabler-player-pause"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M9 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
+                <path d="M17 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="icon icon-tabler icon-tabler-player-play"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8a1 1 0 0 0-1.524.852z" />
+              </svg>
+            )}
+          </button>
+
+          <button
+            onClick={next}
+            aria-label="Next"
+            className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="icon icon-tabler icon-tabler-player-track-next"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
+              <path d="M13 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Volume */}
+        <div className="w-full flex items-center gap-5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="icon icon-tabler icon-tabler-volume"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 8a5 5 0 0 1 0 8" />
+            <path d="M17.7 5a9 9 0 0 1 0 14" />
+            <path d="M6 15h-2a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5l-3.5-4.5" />
+          </svg>
+
           <div className="flex-1">
-            <div className="mt-2">
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <Slider
-                    aria-label="Seek"
-                    value={[progress || 0]}
-                    min={0}
-                    max={duration || 0}
-                    onValueChange={(v) => {
-                      const val = Array.isArray(v) ? v[0] : v;
-                      requestSeek(Number(val));
-                    }}
-                    className="cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3 flex items-center justify-between w-full">
-              {/* Left: playback controls */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prev}
-                  aria-label="Previous"
-                  className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="icon icon-tabler icon-tabler-player-track-prev"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M20.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
-                    <path d="M9.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
-                  </svg>
-                </button>
-
-                <button
-                  onClick={togglePlaying}
-                  aria-label={playing ? "Pause" : "Play"}
-                  className="retro bg-foreground/10 px-3 py-1 cursor-pointer"
-                >
-                  {playing ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="icon icon-tabler icon-tabler-player-pause"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M9 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
-                      <path d="M17 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="icon icon-tabler icon-tabler-player-play"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8a1 1 0 0 0-1.524.852z" />
-                    </svg>
-                  )}
-                </button>
-
-                <button
-                  onClick={next}
-                  aria-label="Next"
-                  className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="icon icon-tabler icon-tabler-player-track-next"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
-                    <path d="M13 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Center: time */}
-              <div className="flex items-center gap-2">
-                <span>{formatTime(progress || 0)}</span>
-                <span className="opacity-60">/</span>
-                <span>{formatTime(duration || 0)}</span>
-              </div>
-
-              {/* Right: volume */}
-              <div className="flex items-center gap-2 w-40 justify-end text-[10px]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="icon icon-tabler icon-tabler-volume"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M15 8a5 5 0 0 1 0 8" />
-                  <path d="M17.7 5a9 9 0 0 1 0 14" />
-                  <path d="M6 15h-2a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5l-3.5-4.5" />
-                </svg>
-
-                <Slider
-                  aria-label="Volume"
-                  value={[volume]}
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  onValueChange={(v) =>
-                    setVolume(Array.isArray(v) ? Number(v[0]) : Number(v))
-                  }
-                  className="w-28 cursor-pointer "
-                />
-              </div>
-            </div>
+            <Slider
+              aria-label="Volume"
+              value={[volume]}
+              min={0}
+              max={1}
+              step={0.01}
+              onValueChange={(v) =>
+                setVolume(Array.isArray(v) ? Number(v[0]) : Number(v))
+              }
+              className="w-full cursor-pointer"
+            />
           </div>
         </div>
       </CardContent>

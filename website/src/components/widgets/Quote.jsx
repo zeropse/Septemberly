@@ -36,10 +36,12 @@ export default function Quote({ className }) {
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="font-semibold">Quote of the Day</CardTitle>
+        <CardTitle className="font-semibold text-center text-3xl">
+          Quote of the Day
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="mb-10 flex flex-col justify-between min-h-[200px]">
+      <CardContent className="mb-10 flex flex-col justify-between min-h-[100px]">
         <div>
           <blockquote className="italic leading-relaxed text-gray-200 mb-5">
             “{quote.text}”
