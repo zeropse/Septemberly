@@ -51,7 +51,7 @@ export default function TodoList() {
     (id) => {
       const taskToRemove = tasks.find((t) => t.id === id);
       if (taskToRemove) {
-        toast(`Task "${taskToRemove.text}" deleted.`);
+        toast(`Task deleted.`);
       }
       deleteTask(id);
     },
