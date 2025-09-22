@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/8bit/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -92,6 +93,9 @@ export default function NotesList({
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Delete this note?</DialogTitle>
+                      <DialogDescription>
+                        Are you sure? This action cannot be undone.
+                      </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="flex gap-3">
                       <Button

@@ -7,7 +7,7 @@ import PomodoroManager from '@/data/PomodoroManager'
 const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="septemberly-ui-theme">
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
       <AudioManager />
       <PomodoroManager />
       <Layout />

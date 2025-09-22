@@ -18,7 +18,7 @@ const Home = () => {
     <div className="relative min-h-screen w-full">
       {/* Background video */}
       <video
-        src="/bg.mp4"
+        src="./bg.mp4"
         autoPlay
         muted
         loop

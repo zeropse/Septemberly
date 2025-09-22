@@ -1,19 +1,14 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/8bit/card";
-import { Button } from "@/components/ui/8bit/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/8bit/card'
+import { Button } from '@/components/ui/8bit/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/8bit/dialog";
+  DialogTrigger
+} from '@/components/ui/8bit/dialog'
 
 export default function NotesList({
   notes = [],
@@ -21,7 +16,7 @@ export default function NotesList({
   deleteDialogId,
   setDeleteDialogId,
   handleDelete,
-  onOpenCreate,
+  onOpenCreate
 }) {
   return (
     <Card>
@@ -41,23 +36,19 @@ export default function NotesList({
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {notes.length === 0 && (
-            <p className="text-sm text-gray-400 text-center">No notes yet.</p>
-          )}
+          {notes.length === 0 && <p className="text-sm text-gray-400 text-center">No notes yet.</p>}
           {notes.map((n) => (
             <Card key={n.id}>
               <CardHeader className="flex items-center justify-between min-w-0">
                 <div className="flex items-center gap-2 min-w-0">
                   <strong className="break-words whitespace-normal max-w-full">
-                    {n.title || "(Untitled)"}
+                    {n.title || '(Untitled)'}
                   </strong>
                 </div>
                 <div className="text-xs text-gray-400">
                   {new Date(n.updatedAt || n.createdAt).toLocaleString()}
                   {n.updatedAt && n.createdAt && n.updatedAt > n.createdAt ? (
-                    <span className="ml-2 text-[11px] text-gray-500">
-                      (edited)
-                    </span>
+                    <span className="ml-2 text-[11px] text-gray-500">(edited)</span>
                   ) : (
                     <span className="ml-2">&nbsp;</span>
                   )}
@@ -67,11 +58,7 @@ export default function NotesList({
                 <p className="whitespace-pre-wrap break-words">{n.content}</p>
               </CardContent>
               <CardFooter className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={() => handleEdit(n)}
-                  className="cursor-pointer w-1/2"
-                >
+                <Button size="sm" onClick={() => handleEdit(n)} className="cursor-pointer w-1/2">
                   Edit
                 </Button>
                 <Dialog
@@ -81,17 +68,16 @@ export default function NotesList({
                   }
                 >
                   <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="cursor-pointer w-1/2"
-                    >
+                    <Button size="sm" variant="destructive" className="cursor-pointer w-1/2">
                       Delete
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Delete this note?</DialogTitle>
+                      <DialogDescription>
+                        Are you sure? This action cannot be undone.
+                      </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="flex gap-3">
                       <Button
@@ -117,5 +103,5 @@ export default function NotesList({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

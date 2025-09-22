@@ -5,9 +5,12 @@ import {
   DialogTrigger,
   DialogContent,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
   DialogClose,
-} from "@/components/ui/dialog";
+} from "@/components/ui/8bit/dialog";
+import Settings from "@/components/widgets/Settings";
+import { Settings as SettingsIcon } from "lucide-react";
 import ProfileCard from "@/components/widgets/Profile";
 import {
   Avatar,
@@ -15,7 +18,6 @@ import {
   AvatarImage,
 } from "@/components/ui/8bit/avatar";
 import { useProfileName } from "@/stores/appStore";
-import { Separator } from "@/components/ui/8bit/separator";
 
 const Header = () => {
   const profileName = useProfileName();
@@ -59,9 +61,34 @@ const Header = () => {
           <Dialog>
             <DialogTrigger asChild>
               <Button
+                size="icon"
+                variant="outline"
+                className="cursor-pointer"
+                aria-label="Settings"
+              >
+                <SettingsIcon className="h-5 w-5" />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Settings</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                Configure theme and reset application data.
+              </DialogDescription>
+              <Settings />
+              <DialogClose />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
                 variant="ghost"
                 size="sm"
                 className="p-0 rounded-full cursor-pointer"
+                aria-label="Profile"
               >
                 <Avatar className="size-9" variant="pixel">
                   <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
@@ -74,16 +101,15 @@ const Header = () => {
               <DialogHeader>
                 <DialogTitle>Profile</DialogTitle>
               </DialogHeader>
-
+              <DialogDescription>
+                View and edit your profile information.
+              </DialogDescription>
               <ProfileCard />
-
               <DialogClose />
             </DialogContent>
           </Dialog>
         </div>
       </header>
-
-      <Separator className="my-4" />
     </>
   );
 };

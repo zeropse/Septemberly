@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/8bit/button";
 import { useTheme } from "./theme-context";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/8bit/card";
 
 export function ThemeSwitcher() {
   const { themeVariant, setThemeVariant } = useTheme();
@@ -24,9 +30,11 @@ export function ThemeSwitcher() {
   ];
 
   return (
-    <div className="w-full">
-      <h3 className="text-center font-medium mb-4">Themes</h3>
-      <div className="grid grid-cols-2 gap-5">
+    <Card>
+      <CardHeader>
+        <CardTitle>Themes</CardTitle>
+      </CardHeader>
+      <CardContent className="grid grid-cols-2 gap-5">
         {themes.map((theme) => {
           const isActive = themeVariant === theme.id;
 
@@ -42,7 +50,7 @@ export function ThemeSwitcher() {
             </Button>
           );
         })}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

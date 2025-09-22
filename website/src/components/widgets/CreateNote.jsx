@@ -1,9 +1,17 @@
 import { Input } from "@/components/ui/8bit/input";
 import { Textarea } from "@/components/ui/8bit/textarea";
 import { Button } from "@/components/ui/8bit/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/8bit/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function CreateNote({
+  open,
+  onOpenChange,
   title,
   setTitle,
   content,
@@ -20,8 +28,14 @@ export default function CreateNote({
   };
 
   return (
-    <Card>
-      <CardContent>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="!max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{editingId ? "Edit Note" : "New Note"}</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          {editingId ? "Edit your note." : "Create a new note."}
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-2">
           <Input
             placeholder="Title"
@@ -33,10 +47,10 @@ export default function CreateNote({
             placeholder="Write something..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={4}
-            className="min-w-0 w-full break-words whitespace-normal"
+            rows={10}
+            className="min-w-0 w-full break-words whitespace-normal resize-y"
           />
-          <CardFooter className="flex items-center justify-between gap-4 mt-6">
+          <div className="flex items-center justify-between gap-3 mt-5">
             {editingId ? (
               <>
                 <Button
@@ -45,14 +59,14 @@ export default function CreateNote({
                     resetForm();
                     if (typeof onClose === "function") onClose();
                   }}
-                  className="cursor-pointer w-1/2"
+                  className="cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   variant="default"
-                  className="cursor-pointer w-1/2"
+                  className="cursor-pointer"
                 >
                   Update
                 </Button>
@@ -66,9 +80,9 @@ export default function CreateNote({
                 Add Note
               </Button>
             )}
-          </CardFooter>
+          </div>
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

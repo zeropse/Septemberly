@@ -2,12 +2,6 @@ import { useState, useMemo } from "react";
 import { useNotesStore } from "@/stores/notesStore";
 import CreateNote from "@/components/widgets/CreateNote";
 import NotesList from "@/components/widgets/NotesList";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/8bit/dialog";
 import { toast } from "@/components/ui/8bit/toast";
 
 export default function Notes() {
@@ -74,27 +68,22 @@ export default function Notes() {
 
   return (
     <div className="space-y-4">
-      <Dialog open={createOpen} onOpenChange={(open) => setCreateOpen(open)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Note" : "New Note"}</DialogTitle>
-          </DialogHeader>
-          <CreateNote
-            title={title}
-            setTitle={setTitle}
-            content={content}
-            setContent={setContent}
-            editingId={editingId}
-            resetForm={resetForm}
-            handleAddOrUpdate={(e) => {
-              const res = handleAddOrUpdate(e);
-              if (res) setCreateOpen(false);
-              return res;
-            }}
-            onClose={() => setCreateOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      <CreateNote
+        open={createOpen}
+        onOpenChange={(open) => setCreateOpen(open)}
+        title={title}
+        setTitle={setTitle}
+        content={content}
+        setContent={setContent}
+        editingId={editingId}
+        resetForm={resetForm}
+        handleAddOrUpdate={(e) => {
+          const res = handleAddOrUpdate(e);
+          if (res) setCreateOpen(false);
+          return res;
+        }}
+        onClose={() => setCreateOpen(false)}
+      />
 
       <NotesList
         notes={filtered}
