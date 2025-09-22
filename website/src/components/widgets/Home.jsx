@@ -31,7 +31,7 @@ const Home = () => {
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
 
       {/* Main content */}
       <main className="relative z-10 flex flex-col min-h-screen w-full p-6">
@@ -44,13 +44,13 @@ const Home = () => {
           </div>
 
           {/* Task Overview */}
-          <Card className="bg-black/10 mb-2">
+          <Card className="bg-black/10">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold text-center sm:text-left">
+              <CardTitle className="text-xl font-semibold text-center">
                 Task Overview
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2 text-center sm:text-left">
+            <CardContent className="flex flex-col gap-2 text-center">
               {stats.total === 0 ? (
                 <p>No new tasks</p>
               ) : (
