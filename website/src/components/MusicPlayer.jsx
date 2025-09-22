@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/8bit/card";
 import { Slider } from "@/components/ui/8bit/slider";
 import useMusicStore from "@/stores/musicStore";
 import tracksData from "@/data/songs";
-import { Button } from "./ui/8bit/button";
+import { Button } from "@/components/ui/8bit/button";
 
 /**
  * RetroMusicPlayer
