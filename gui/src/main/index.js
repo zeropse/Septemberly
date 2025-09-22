@@ -3,15 +3,15 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
 function createWindow() {
-  // Create the browser window.
   const iconPath = join('__dirname', '../../resources/icon.png')
   const mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 1300,
     height: 1000,
     show: false,
     autoHideMenuBar: true,
     title: 'Septemberly',
     icon: iconPath,
+    center: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -20,6 +20,7 @@ function createWindow() {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    mainWindow.center()
     mainWindow.setTitle('Septemberly')
   })
 
