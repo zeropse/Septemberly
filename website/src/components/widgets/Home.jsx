@@ -65,7 +65,7 @@ const Home = () => {
           {/* Calendar + Music grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
             <div>
-              <Card className="bg-black/10 p-4 flex justify-center items-center">
+              <Card className="bg-black/10 p-9 flex justify-center items-center">
                 <Calendar mode="single" selected={date} onSelect={setDate} />
               </Card>
             </div>

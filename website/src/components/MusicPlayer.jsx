@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/8bit/card";
 import { Slider } from "@/components/ui/8bit/slider";
 import useMusicStore from "@/stores/musicStore";
 import tracksData from "@/data/songs";
+import { Button } from "./ui/8bit/button";
 
 /**
  * RetroMusicPlayer
@@ -52,25 +53,20 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
   }, []);
 
   return (
-    <Card className={cn("retro rounded-none p-4", className)} font="retro">
-      <CardContent className="p-1 flex flex-col items-center">
-        {/* SVG record at top */}
-        <motion.svg
-          width="120"
-          height="120"
-          viewBox="0 0 200 200"
-          xmlns="http://www.w3.org/2000/svg"
-          className={playing ? "my-2 animate-spin" : "my-2"}
+    <Card className={cn("retro rounded-none p-0", className)} font="retro">
+      <CardContent className="p-5 flex flex-col items-center">
+        <motion.img
+          src="/record.png"
+          alt="Record"
+          width={140}
+          height={140}
+          className="mb-5 rounded-full border-2 border-white"
           animate={playing ? { rotate: 360 } : { rotate: 0 }}
           transition={
             playing ? { repeat: Infinity, duration: 2, ease: "linear" } : {}
           }
-        >
-          <circle cx="100" cy="100" r="95" fill="#23ede9" />
-          <circle cx="100" cy="100" r="40" fill="#8B0000" />
-          <circle cx="100" cy="100" r="42" stroke="#FF8C00" strokeWidth="2" />
-          <image href="/cat.png" x="65" y="65" height="70" width="70" />
-        </motion.svg>
+          style={{ transformOrigin: "50% 50%" }}
+        />
 
         {/* Time / duration */}
         <div className="flex items-center gap-2 text-sm mb-5">
@@ -95,11 +91,11 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-center gap-3 w-full mb-5">
-          <button
+        <div className="flex items-center justify-center gap-5 w-full mb-4">
+          <Button
             onClick={prev}
             aria-label="Previous"
-            className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
+            className="cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -113,12 +109,12 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
               <path d="M20.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
               <path d="M9.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
             </svg>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={togglePlaying}
             aria-label={playing ? "Pause" : "Play"}
-            className="retro bg-foreground/10 px-3 py-1 cursor-pointer"
+            className="cursor-pointer"
           >
             {playing ? (
               <svg
@@ -146,13 +142,9 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
                 <path d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8a1 1 0 0 0-1.524.852z" />
               </svg>
             )}
-          </button>
+          </Button>
 
-          <button
-            onClick={next}
-            aria-label="Next"
-            className="retro bg-foreground/10 px-2 py-1 cursor-pointer"
-          >
+          <Button onClick={next} aria-label="Next" className="cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -165,30 +157,32 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
               <path d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
               <path d="M13 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
             </svg>
-          </button>
+          </Button>
         </div>
 
         {/* Volume */}
         <div className="w-full flex items-center gap-5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="icon icon-tabler icon-tabler-volume"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M15 8a5 5 0 0 1 0 8" />
-            <path d="M17.7 5a9 9 0 0 1 0 14" />
-            <path d="M6 15h-2a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5l-3.5-4.5" />
-          </svg>
+          <Button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="icon icon-tabler icon-tabler-volume"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M15 8a5 5 0 0 1 0 8" />
+              <path d="M17.7 5a9 9 0 0 1 0 14" />
+              <path d="M6 15h-2a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5l-3.5-4.5" />
+            </svg>
+          </Button>
 
           <div className="flex-1">
             <Slider
