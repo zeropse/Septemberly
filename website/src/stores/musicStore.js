@@ -4,7 +4,9 @@ export const useMusicStore = create((set, get) => ({
   tracks: [],
   index: 0,
   playing: false,
-  volume: 0.9,
+  volume: 1,
+  muted: false,
+  lastVolume: 1,
   progress: 0,
   duration: 0,
   seekRequest: null,
@@ -28,6 +30,20 @@ export const useMusicStore = create((set, get) => ({
   setPlaying: (playing) => set({ playing }),
   togglePlaying: () => set((s) => ({ playing: !s.playing })),
   setVolume: (volume) => set({ volume }),
+  setMuted: (muted) =>
+    set((s) => {
+      if (muted) {
+        return { muted: true, lastVolume: s.volume, volume: 0 };
+      }
+      return { muted: false, volume: s.lastVolume ?? 1 };
+    }),
+  toggleMute: () =>
+    set((s) => {
+      if (s.muted) {
+        return { muted: false, volume: s.lastVolume ?? 1 };
+      }
+      return { muted: true, lastVolume: s.volume, volume: 0 };
+    }),
   setProgress: (progress) => set({ progress }),
   setDuration: (duration) => set({ duration }),
   requestSeek: (progress) => set({ progress, seekRequest: progress }),

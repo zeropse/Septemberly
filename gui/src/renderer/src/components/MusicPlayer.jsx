@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion as Motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/8bit/card'
 import { Slider } from '@/components/ui/8bit/slider'
@@ -11,7 +11,8 @@ import {
   IconPlayerTrackNextFilled,
   IconPlayerTrackPrevFilled,
   IconPlayerPlayFilled,
-  IconPlayerPauseFilled
+  IconPlayerPauseFilled,
+  IconVolumeOff
 } from '@tabler/icons-react'
 
 /**
@@ -36,6 +37,9 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
   const setVolume = useMusicStore((s) => s.setVolume)
   const requestSeek = useMusicStore((s) => s.requestSeek)
   const togglePlaying = useMusicStore((s) => s.togglePlaying)
+  const muted = useMusicStore((s) => s.muted)
+  const toggleMute = useMusicStore((s) => s.toggleMute)
+  const setMuted = useMusicStore((s) => s.setMuted)
 
   // format seconds into mm:ss (or h:mm:ss if long)
   const formatTime = (secs) => {
@@ -60,9 +64,9 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
   }, [])
 
   return (
-    <Card className={cn('retro rounded-none p-0', className)} font="retro">
-      <CardContent className="p-5 flex flex-col items-center">
-        <motion.img
+    <Card className={cn('retro rounded-none p-2', className)} font="retro">
+      <CardContent className="p-2 flex flex-col items-center">
+        <Motion.img
           src="/record.png"
           alt="Record"
           width={140}
@@ -120,8 +124,12 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
 
         {/* Volume */}
         <div className="w-full flex items-center gap-5">
-          <Button aria-label="Volume">
-            <IconVolume className="h-5 w-5" />
+          <Button
+            aria-label={muted ? 'Unmute' : 'Mute'}
+            onClick={toggleMute}
+            className="cursor-pointer"
+          >
+            {muted ? <IconVolumeOff className="h-5 w-5" /> : <IconVolume className="h-5 w-5" />}
           </Button>
 
           <div className="flex-1">
@@ -131,7 +139,13 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
               min={0}
               max={1}
               step={0.01}
-              onValueChange={(v) => setVolume(Array.isArray(v) ? Number(v[0]) : Number(v))}
+              onValueChange={(v) => {
+                const val = Array.isArray(v) ? Number(v[0]) : Number(v)
+                if (muted && setMuted) {
+                  setMuted(false)
+                }
+                setVolume(val)
+              }}
               className="w-full cursor-pointer"
             />
           </div>
