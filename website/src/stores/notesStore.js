@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useGamificationStore } from "./gamificationStore";
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
@@ -27,6 +28,11 @@ export const useNotesStore = create(
         set((state) => ({
           notes: [newNote, ...state.notes],
         }));
+
+        // Award XP for adding a note
+        setTimeout(() => {
+          useGamificationStore.getState().addNote();
+        }, 0);
       },
 
       updateNote: (id, { title, content }) => {

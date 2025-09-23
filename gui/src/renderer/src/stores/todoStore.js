@@ -1,10 +1,11 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { useGamificationStore } from './gamificationStore'
 
-const MAX_TODOS = 10;
+const MAX_TODOS = 10
 
 function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9)
 }
 
 export const useTodoStore = create(
@@ -15,91 +16,105 @@ export const useTodoStore = create(
 
       // Actions
       addTask: (text) => {
-        const state = get();
-        if (!text.trim()) return false;
+        const state = get()
+        if (!text.trim()) return false
 
         if (state.tasks.length >= MAX_TODOS) {
-          return false;
+          return false
         }
 
         const newTask = {
           id: uid(),
           text: text.trim(),
           done: false,
-          createdAt: Date.now(),
-        };
+          createdAt: Date.now()
+        }
 
         set((state) => ({
-          tasks: [newTask, ...state.tasks],
-        }));
+          tasks: [newTask, ...state.tasks]
+        }))
 
-        return true;
+        return true
       },
 
       toggleTask: (id) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, done: !task.done } : task
-          ),
-        }));
+        set((state) => {
+          const updatedTasks = state.tasks.map((task) => {
+            if (task.id === id) {
+              const updatedTask = { ...task, done: !task.done }
+
+              // Award XP when completing a task
+              if (updatedTask.done && !task.done) {
+                setTimeout(() => {
+                  useGamificationStore.getState().completeTask()
+                }, 0)
+              }
+
+              return updatedTask
+            }
+            return task
+          })
+
+          return { tasks: updatedTasks }
+        })
       },
 
       deleteTask: (id) => {
         set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        }));
+          tasks: state.tasks.filter((task) => task.id !== id)
+        }))
       },
 
       clearCompleted: () => {
         set((state) => ({
-          tasks: state.tasks.filter((task) => !task.done),
-        }));
-      },
+          tasks: state.tasks.filter((task) => !task.done)
+        }))
+      }
     }),
     {
-      name: "todo-storage",
+      name: 'todo-storage'
     }
   )
-);
+)
 
 // Create computed selectors with proper caching
-let cachedStats = null;
-let lastTasksLength = -1;
-let lastCompletedCount = -1;
+let cachedStats = null
+let lastTasksLength = -1
+let lastCompletedCount = -1
 
 export const useTodoStats = () =>
   useTodoStore((state) => {
-    const total = state.tasks.length;
-    const completed = state.tasks.filter((task) => task.done).length;
+    const total = state.tasks.length
+    const completed = state.tasks.filter((task) => task.done).length
 
     // Only create new object if values actually changed
     if (total !== lastTasksLength || completed !== lastCompletedCount) {
-      lastTasksLength = total;
-      lastCompletedCount = completed;
+      lastTasksLength = total
+      lastCompletedCount = completed
       cachedStats = {
         total,
         completed,
-        remaining: total - completed,
-      };
+        remaining: total - completed
+      }
     }
 
-    return cachedStats;
-  });
+    return cachedStats
+  })
 
-let cachedCanAddTask = null;
-let lastCanAddTaskLength = -1;
+let cachedCanAddTask = null
+let lastCanAddTaskLength = -1
 
 export const useCanAddTask = () =>
   useTodoStore((state) => {
-    const tasksLength = state.tasks.length;
+    const tasksLength = state.tasks.length
 
     // Only recalculate if tasks length changed
     if (tasksLength !== lastCanAddTaskLength) {
-      lastCanAddTaskLength = tasksLength;
-      cachedCanAddTask = tasksLength < MAX_TODOS;
+      lastCanAddTaskLength = tasksLength
+      cachedCanAddTask = tasksLength < MAX_TODOS
     }
 
-    return cachedCanAddTask;
-  });
+    return cachedCanAddTask
+  })
 
-export const useMaxTodos = () => MAX_TODOS;
+export const useMaxTodos = () => MAX_TODOS

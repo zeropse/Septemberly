@@ -1,66 +1,54 @@
-import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/8bit/dialog";
-import { Button } from "@/components/ui/8bit/button";
-import { Input } from "@/components/ui/8bit/input";
-import { Textarea } from "@/components/ui/8bit/textarea";
-import { useAppStore } from "@/stores/appStore";
+import { useEffect, useState } from 'react'
+import { Dialog, DialogContent } from '@/components/ui/8bit/dialog'
+import { Button } from '@/components/ui/8bit/button'
+import { Input } from '@/components/ui/8bit/input'
+import { useAppStore } from '@/stores/appStore'
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectValue,
-} from "@/components/ui/8bit/select";
+  SelectValue
+} from '@/components/ui/8bit/select'
 
 export default function Onboarding({ onFinish }) {
-  const { profile, setProfile } = useAppStore();
-  const [step, setStep] = useState(1);
-  const [name, setName] = useState("");
-  const [trait, setTrait] = useState("");
-  const [about, setAbout] = useState("");
+  const { profile, setProfile } = useAppStore()
+  const [step, setStep] = useState(1)
+  const [name, setName] = useState('')
+  const [trait, setTrait] = useState('')
 
   useEffect(() => {
     if (profile) {
-      setName(profile.name || "");
-      setTrait(profile.trait || "");
-      setAbout(profile.about || "");
+      setName(profile.name || '')
+      setTrait(profile.trait || '')
     }
-  }, [profile]);
+  }, [profile])
 
   function saveAndFinish(data) {
-    setProfile(data);
-    onFinish?.(data);
+    setProfile(data)
+    onFinish?.(data)
   }
 
   function next() {
     if (step === 1) {
-      if (!name.trim()) return; // required
-      setStep(2);
-      return;
+      if (!name.trim()) return // required
+      setStep(2)
+      return
     }
 
     if (step === 2) {
-      if (!trait) return; // required
-      setStep(3);
-      return;
-    }
-
-    if (step === 3) {
-      const data = { name: name.trim(), trait, about };
-      saveAndFinish(data);
+      if (!trait) return // required
+      const data = { name: name.trim(), trait }
+      saveAndFinish(data)
     }
   }
 
   function prev() {
-    setStep((s) => Math.max(1, s - 1));
+    setStep((s) => Math.max(1, s - 1))
   }
 
   const canProceed =
-    step === 1
-      ? Boolean(name.trim())
-      : step === 2
-      ? Boolean(trait)
-      : Boolean(name.trim() && trait);
+    step === 1 ? Boolean(name.trim()) : step === 2 ? Boolean(trait) : Boolean(name.trim() && trait)
 
   return (
     <Dialog open={true}>
@@ -68,12 +56,8 @@ export default function Onboarding({ onFinish }) {
         <div className="flex flex-col gap-4">
           {step === 1 && (
             <div>
-              <h2 className="text-xl font-semibold mb-5">
-                Welcome to Septemberly
-              </h2>
-              <p className="text-sm text-muted-foreground mt-2 mb-2">
-                What's your name?
-              </p>
+              <h2 className="text-xl font-semibold mb-5">Welcome to Septemberly</h2>
+              <p className="text-sm text-muted-foreground mt-2 mb-2">What's your name?</p>
 
               <Input
                 className=""
@@ -93,17 +77,13 @@ export default function Onboarding({ onFinish }) {
                 </SelectTrigger>
                 <SelectContent>
                   {[
-                    { id: "cozy", label: "Cozy" },
-                    { id: "leafy", label: "Leafy" },
-                    { id: "retro", label: "Retro" },
-                    { id: "crisp", label: "Crisp" },
-                    { id: "golden", label: "Golden" },
+                    { id: 'cozy', label: 'Cozy' },
+                    { id: 'leafy', label: 'Leafy' },
+                    { id: 'retro', label: 'Retro' },
+                    { id: 'crisp', label: 'Crisp' },
+                    { id: 'golden', label: 'Golden' }
                   ].map((t) => (
-                    <SelectItem
-                      key={t.id}
-                      value={t.id}
-                      className="cursor-pointer"
-                    >
+                    <SelectItem key={t.id} value={t.id} className="cursor-pointer">
                       {t.label}
                     </SelectItem>
                   ))}
@@ -112,32 +92,10 @@ export default function Onboarding({ onFinish }) {
             </div>
           )}
 
-          {step === 3 && (
-            <div>
-              <h2 className="text-xl font-semibold">Something about you</h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                Tell us something about yourself (optional).
-              </p>
-
-              <Textarea
-                className="mt-4 w-full"
-                rows={4}
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                placeholder="A short bio or something about you..."
-              />
-            </div>
-          )}
-
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-2">
               {step > 1 && (
-                <Button
-                  variant="outline"
-                  onClick={prev}
-                  size="sm"
-                  className="cursor-pointer"
-                >
+                <Button variant="outline" onClick={prev} size="sm" className="cursor-pointer">
                   Back
                 </Button>
               )}
@@ -148,18 +106,14 @@ export default function Onboarding({ onFinish }) {
                 onClick={next}
                 size="sm"
                 disabled={!canProceed}
-                className={`${
-                  !canProceed
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }`}
+                className={`${!canProceed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                {step === 3 ? "Finish" : "Next"}
+                {step === 2 ? 'Finish' : 'Next'}
               </Button>
             </div>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

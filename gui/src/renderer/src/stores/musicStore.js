@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useGamificationStore } from './gamificationStore'
 
 export const useMusicStore = create((set, get) => ({
   tracks: [],
@@ -47,7 +48,14 @@ export const useMusicStore = create((set, get) => ({
   setProgress: (progress) => set({ progress }),
   setDuration: (duration) => set({ duration }),
   requestSeek: (progress) => set({ progress, seekRequest: progress }),
-  clearSeek: () => set({ seekRequest: null })
+  clearSeek: () => set({ seekRequest: null }),
+
+  // Award XP for listening to a full track
+  awardTrackXP: () => {
+    setTimeout(() => {
+      useGamificationStore.getState().listenFullTrack()
+    }, 0)
+  }
 }))
 
 // convenience selectors

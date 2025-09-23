@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/8bit/dialog";
 import { Button } from "@/components/ui/8bit/button";
 import { Input } from "@/components/ui/8bit/input";
-import { Textarea } from "@/components/ui/8bit/textarea";
 import { useAppStore } from "@/stores/appStore";
 import {
   Select,
@@ -17,13 +16,11 @@ export default function Onboarding({ onFinish }) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [trait, setTrait] = useState("");
-  const [about, setAbout] = useState("");
 
   useEffect(() => {
     if (profile) {
       setName(profile.name || "");
       setTrait(profile.trait || "");
-      setAbout(profile.about || "");
     }
   }, [profile]);
 
@@ -41,12 +38,7 @@ export default function Onboarding({ onFinish }) {
 
     if (step === 2) {
       if (!trait) return; // required
-      setStep(3);
-      return;
-    }
-
-    if (step === 3) {
-      const data = { name: name.trim(), trait, about };
+      const data = { name: name.trim(), trait };
       saveAndFinish(data);
     }
   }
@@ -112,23 +104,6 @@ export default function Onboarding({ onFinish }) {
             </div>
           )}
 
-          {step === 3 && (
-            <div>
-              <h2 className="text-xl font-semibold">Something about you</h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                Tell us something about yourself (optional).
-              </p>
-
-              <Textarea
-                className="mt-4 w-full"
-                rows={4}
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                placeholder="A short bio or something about you..."
-              />
-            </div>
-          )}
-
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-2">
               {step > 1 && (
@@ -154,7 +129,7 @@ export default function Onboarding({ onFinish }) {
                     : "cursor-pointer"
                 }`}
               >
-                {step === 3 ? "Finish" : "Next"}
+                {step === 2 ? "Finish" : "Next"}
               </Button>
             </div>
           </div>

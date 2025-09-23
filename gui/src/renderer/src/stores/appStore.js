@@ -8,7 +8,6 @@ export const useAppStore = create(
       // App State
       activeWidget: widgets[0].id,
       profile: null,
-      profileDraft: null,
       onboarded: false,
 
       // Actions
@@ -18,38 +17,7 @@ export const useAppStore = create(
         set({
           profile,
           onboarded: true
-        }),
-
-      setProfileDraft: (draft) => set({ profileDraft: draft }),
-
-      updateProfileDraft: (updates) =>
-        set((state) => ({
-          profileDraft: state.profileDraft
-            ? { ...state.profileDraft, ...updates }
-            : { ...state.profile, ...updates }
-        })),
-
-      clearProfileDraft: () => set({ profileDraft: null }),
-
-      commitProfileDraft: () =>
-        set((state) => ({
-          profile: state.profileDraft ? { ...state.profileDraft } : state.profile,
-          profileDraft: null,
-          onboarded: Boolean(state.profileDraft) || state.onboarded
-        })),
-
-      updateProfile: (updates) =>
-        set((state) => ({
-          profile: state.profile ? { ...state.profile, ...updates } : updates
-        })),
-
-      clearProfile: () =>
-        set({
-          profile: null,
-          onboarded: false
-        }),
-
-      completeOnboarding: () => set({ onboarded: true })
+        })
     }),
     {
       name: 'app-storage', // localStorage key
@@ -67,6 +35,3 @@ export const useIsOnboarded = () => useAppStore((state) => Boolean(state.profile
 export const useProfileName = () => useAppStore((state) => state.profile?.name)
 
 export const useProfileTrait = () => useAppStore((state) => state.profile?.trait)
-
-export const useProfileAbout = () =>
-  useAppStore((state) => state.profile?.about || 'Please add about.')

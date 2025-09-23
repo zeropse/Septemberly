@@ -8,6 +8,25 @@ Septemberly is a lightweight, productivity dashboard implemented with React and 
 - View short inspirational quotes and a simple profile widget.
 - Check weather of any place in Earth.
 
+## 🎮 Gamification System
+
+Septemberly includes a built-in XP (Experience Points) and leveling system to make productivity more engaging:
+
+### XP Rewards
+
+- **Completing a task:** +5 XP
+- **Finishing a pomodoro session:** +10 XP
+- **Adding a note:** +2 XP
+- **Listening to a full track:** +1 XP
+
+### Level Progression
+
+- **Level 1:** Novice Focuser (0-99 XP)
+- **Level 2:** Apprentice (100-249 XP)
+- **Level 3:** Journeyman (250-499 XP)
+- **Level 4:** Scholar (500-999 XP)
+- **Level 5:** Focus Master (1000+ XP) - Maximum level
+
 # How to Use
 
 ### Website

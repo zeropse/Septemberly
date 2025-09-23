@@ -1,8 +1,9 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { useGamificationStore } from './gamificationStore'
 
 function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9)
 }
 
 export const useNotesStore = create(
@@ -14,47 +15,52 @@ export const useNotesStore = create(
       // Actions
       addNote: ({ title, content }) => {
         // Defensive programming: ensure parameters exist
-        if (!title && !content) return;
+        if (!title && !content) return
 
         const newNote = {
           id: uid(),
-          title: (title || "").trim(),
-          content: (content || "").trim(),
+          title: (title || '').trim(),
+          content: (content || '').trim(),
           createdAt: Date.now(),
-          updatedAt: Date.now(),
-        };
+          updatedAt: Date.now()
+        }
 
         set((state) => ({
-          notes: [newNote, ...state.notes],
-        }));
+          notes: [newNote, ...state.notes]
+        }))
+
+        // Award XP for adding a note
+        setTimeout(() => {
+          useGamificationStore.getState().addNote()
+        }, 0)
       },
 
       updateNote: (id, { title, content }) => {
         // Defensive programming: ensure parameters exist
-        if (!id) return;
+        if (!id) return
 
         set((state) => ({
           notes: state.notes.map((note) =>
             note.id === id
               ? {
                   ...note,
-                  title: (title || "").trim(),
-                  content: (content || "").trim(),
-                  updatedAt: Date.now(),
+                  title: (title || '').trim(),
+                  content: (content || '').trim(),
+                  updatedAt: Date.now()
                 }
               : note
-          ),
-        }));
+          )
+        }))
       },
 
       deleteNote: (id) => {
         set((state) => ({
-          notes: state.notes.filter((note) => note.id !== id),
-        }));
-      },
+          notes: state.notes.filter((note) => note.id !== id)
+        }))
+      }
     }),
     {
-      name: "notes-storage",
+      name: 'notes-storage'
     }
   )
-);
+)

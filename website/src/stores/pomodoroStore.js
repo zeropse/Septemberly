@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "@/components/ui/8bit/toast";
+import { useGamificationStore } from "./gamificationStore";
 
 const POMODORO = {
   FOCUS: 25 * 60,
@@ -63,10 +64,15 @@ export const usePomodoroStore = create(
         });
       },
 
-      incrementSession: () =>
+      incrementSession: () => {
         set((state) => ({
           sessions: state.sessions + 1,
-        })),
+        }));
+        // Award XP for completing a pomodoro session
+        setTimeout(() => {
+          useGamificationStore.getState().finishPomodoro();
+        }, 0);
+      },
 
       tick: () => {
         const state = get();

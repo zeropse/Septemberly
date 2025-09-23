@@ -13,6 +13,7 @@ export default function AudioManager() {
   const setDuration = useMusicStore((s) => s.setDuration);
   const setIndex = useMusicStore((s) => s.setIndex);
   const setPlaying = useMusicStore((s) => s.setPlaying);
+  const awardTrackXP = useMusicStore((s) => s.awardTrackXP);
   const seekRequest = useMusicStore((s) => s.seekRequest);
   const clearSeek = useMusicStore((s) => s.clearSeek);
 
@@ -23,6 +24,8 @@ export default function AudioManager() {
 
     const onLoaded = () => setDuration(audio.duration || 0);
     const onEnded = () => {
+      // Award XP for listening to a full track
+      awardTrackXP();
       setIndex(index + 1);
     };
     const onTime = () => setProgress(audio.currentTime || 0);

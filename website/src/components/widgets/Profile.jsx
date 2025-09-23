@@ -10,17 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/8bit/card";
-import {
-  useProfileName,
-  useProfileTrait,
-  useProfileAbout,
-  useAppStore,
-} from "@/stores/appStore";
-import { useState } from "react";
-import { CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/8bit/button";
-import { Input } from "@/components/ui/8bit/input";
-import { Textarea } from "@/components/ui/8bit/textarea";
+import { useProfileName, useProfileTrait } from "@/stores/appStore";
+import { useGamificationStore } from "@/stores/gamificationStore";
 
 function getInitials(name) {
   if (!name) return "?";
@@ -33,94 +24,119 @@ function getInitials(name) {
 export default function ProfileCard() {
   const name = useProfileName();
   const trait = useProfileTrait();
-  const about = useProfileAbout();
-  const profileDraft = useAppStore((s) => s.profileDraft);
-  const setProfileDraft = useAppStore((s) => s.setProfileDraft);
-  const updateProfileDraft = useAppStore((s) => s.updateProfileDraft);
-  const clearProfileDraft = useAppStore((s) => s.clearProfileDraft);
-  const commitProfileDraft = useAppStore((s) => s.commitProfileDraft);
-  const [isEditing, setIsEditing] = useState(false);
+
+  // Gamification store hooks
+  const totalXP = useGamificationStore((state) => state.totalXP);
+  const getCurrentLevelInfo = useGamificationStore(
+    (state) => state.getCurrentLevelInfo
+  );
+  const getProgressToNextLevel = useGamificationStore(
+    (state) => state.getProgressToNextLevel
+  );
+  const recentActions = useGamificationStore((state) => state.recentActions);
+
+  const currentLevel = getCurrentLevelInfo();
+  const { progress, remaining } = getProgressToNextLevel();
+  const isMaxLevel = currentLevel.level === 5;
 
   return (
-    <Card className="min-w-sm max-w-md">
-      <CardHeader className="flex flex-col items-center gap-2">
-        <Avatar
-          className="size-20"
-          variant={trait === "retro" ? "retro" : "pixel"}
-        >
-          <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
-          <AvatarFallback>{getInitials(name)}</AvatarFallback>
-        </Avatar>
+    <div className="space-y-4">
+      {/* Profile Card */}
+      <Card className="min-w-sm max-w-lg">
+        <CardHeader className="flex flex-col items-center gap-2">
+          <Avatar
+            className="size-20"
+            variant={trait === "retro" ? "retro" : "pixel"}
+          >
+            <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
+            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+          </Avatar>
 
-        <CardTitle>
-          <h3>{name}</h3>
-        </CardTitle>
+          <CardTitle>
+            <h3>{name}</h3>
+          </CardTitle>
 
-        <Badge>
-          {trait === "none"
-            ? "None"
-            : trait.charAt(0).toUpperCase() + trait.slice(1)}
-        </Badge>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center gap-4">
-        {isEditing ? (
-          <div className="w-full flex flex-col items-center gap-4">
-            <Input
-              value={profileDraft?.name ?? name}
-              onChange={(e) => updateProfileDraft({ name: e.target.value })}
-              placeholder="Name"
-              className="w-full rounded"
-            />
-            <Textarea
-              value={profileDraft?.about ?? about}
-              onChange={(e) => updateProfileDraft({ about: e.target.value })}
-              className="w-full rounded"
-              rows={3}
-              placeholder="About"
-            />
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground text-center w-3/4 mx-auto">
-            {about}
-          </p>
-        )}
-      </CardContent>
-      <CardFooter className="text-center flex flex-col gap-5">
-        <div>
-          {isEditing ? (
-            <div className="w-full flex gap-4">
-              <Button
-                onClick={() => {
-                  clearProfileDraft();
-                  setIsEditing(false);
-                }}
-                className="w-1/2 cursor-pointer"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  commitProfileDraft();
-                  setIsEditing(false);
-                }}
-                className="w-1/2 cursor-pointer"
-              >
-                Save
-              </Button>
+          <Badge>
+            {trait === "none"
+              ? "None"
+              : trait.charAt(0).toUpperCase() + trait.slice(1)}
+          </Badge>
+        </CardHeader>
+      </Card>
+
+      {/* Gamification Progress */}
+      <Card className="bg-black/10">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold text-center flex items-center justify-center gap-2">
+            🎮 Progress
+            <Badge variant="secondary" className="font-bold">
+              Level {currentLevel.level}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Level Info */}
+          <div className="text-center space-y-2">
+            <div className="text-lg font-medium text-yellow-400">
+              {currentLevel.name}
             </div>
-          ) : (
-            <Button
-              onClick={() => {
-                setProfileDraft({ name, about, trait });
-                setIsEditing(true);
-              }}
-              className="w-full cursor-pointer"
-            >
-              Edit Profile
-            </Button>
+            <div className="text-sm opacity-80">
+              Total XP:{" "}
+              <span className="font-bold text-green-400">{totalXP}</span>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          {!isMaxLevel && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span>Level {currentLevel.level}</span>
+                <span>Level {currentLevel.level + 1}</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${Math.min(progress, 100)}%` }}
+                />
+              </div>
+              <div className="text-xs text-center opacity-70">
+                {remaining} XP to next level
+              </div>
+            </div>
           )}
-        </div>
-      </CardFooter>
-    </Card>
+
+          {isMaxLevel && (
+            <div className="text-center text-yellow-500 font-bold">
+              ⭐ Maximum Level Reached! ⭐
+            </div>
+          )}
+
+          {/* Recent Activities */}
+          {recentActions.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-center">
+                Recent Activities
+              </div>
+              <div className="max-h-20 overflow-y-auto space-y-1">
+                {recentActions.slice(0, 3).map((action) => (
+                  <div
+                    key={action.id}
+                    className="flex items-center justify-between text-xs bg-black/20 rounded px-2 py-1"
+                  >
+                    <span className="truncate flex-1">{action.action}</span>
+                    <div className="flex items-center gap-1 ml-2">
+                      <span className="text-green-400">+{action.xpGained}</span>
+                      {action.levelUp && (
+                        <span className="text-yellow-400">🎉</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

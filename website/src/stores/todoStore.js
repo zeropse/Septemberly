@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useGamificationStore } from "./gamificationStore";
 
 const MAX_TODOS = 10;
 
@@ -37,11 +38,25 @@ export const useTodoStore = create(
       },
 
       toggleTask: (id) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, done: !task.done } : task
-          ),
-        }));
+        set((state) => {
+          const updatedTasks = state.tasks.map((task) => {
+            if (task.id === id) {
+              const updatedTask = { ...task, done: !task.done };
+
+              // Award XP when completing a task
+              if (updatedTask.done && !task.done) {
+                setTimeout(() => {
+                  useGamificationStore.getState().completeTask();
+                }, 0);
+              }
+
+              return updatedTask;
+            }
+            return task;
+          });
+
+          return { tasks: updatedTasks };
+        });
       },
 
       deleteTask: (id) => {

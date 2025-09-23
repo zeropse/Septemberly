@@ -74,11 +74,11 @@ const Header = () => {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle>Profile</DialogTitle>
               </DialogHeader>
-              <DialogDescription>View and edit your profile information.</DialogDescription>
+              <DialogDescription>View your profile information and stats.</DialogDescription>
               <ProfileCard />
               <DialogClose />
             </DialogContent>
