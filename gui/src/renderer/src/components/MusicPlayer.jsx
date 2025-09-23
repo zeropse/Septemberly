@@ -6,6 +6,13 @@ import { Slider } from '@/components/ui/8bit/slider'
 import useMusicStore from '@/stores/musicStore'
 import tracksData from '@/data/songs'
 import { Button } from '@/components/ui/8bit/button'
+import {
+  IconVolume,
+  IconPlayerTrackNextFilled,
+  IconPlayerTrackPrevFilled,
+  IconPlayerPlayFilled,
+  IconPlayerPauseFilled
+} from '@tabler/icons-react'
 
 /**
  * RetroMusicPlayer
@@ -56,7 +63,7 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
     <Card className={cn('retro rounded-none p-0', className)} font="retro">
       <CardContent className="p-5 flex flex-col items-center">
         <motion.img
-          src="./record.png"
+          src="/record.png"
           alt="Record"
           width={140}
           height={140}
@@ -91,18 +98,7 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
         {/* Controls */}
         <div className="flex items-center justify-center gap-5 w-full mb-4">
           <Button onClick={prev} aria-label="Previous" className="cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="icon icon-tabler icon-tabler-player-track-prev"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M20.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
-              <path d="M9.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753v-14c0-.86-1.012-1.318-1.659-.753z" />
-            </svg>
+            <IconPlayerTrackPrevFilled className="h-5 w-5" />
           </Button>
 
           <Button
@@ -111,71 +107,21 @@ export default function RetroMusicPlayer({ tracks = [], className = '' }) {
             className="cursor-pointer"
           >
             {playing ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="icon icon-tabler icon-tabler-player-pause"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
-                <path d="M17 4h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2z" />
-              </svg>
+              <IconPlayerPauseFilled className="h-5 w-5" />
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="icon icon-tabler icon-tabler-player-play"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8a1 1 0 0 0-1.524.852z" />
-              </svg>
+              <IconPlayerPlayFilled className="h-5 w-5" />
             )}
           </Button>
 
           <Button onClick={next} aria-label="Next" className="cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="icon icon-tabler icon-tabler-player-track-next"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
-              <path d="M13 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7c-.647-.565-1.659-.106-1.659.753z" />
-            </svg>
+            <IconPlayerTrackNextFilled className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Volume */}
         <div className="w-full flex items-center gap-5">
-          <Button>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="icon icon-tabler icon-tabler-volume"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M15 8a5 5 0 0 1 0 8" />
-              <path d="M17.7 5a9 9 0 0 1 0 14" />
-              <path d="M6 15h-2a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5l-3.5-4.5" />
-            </svg>
+          <Button aria-label="Volume">
+            <IconVolume className="h-5 w-5" />
           </Button>
 
           <div className="flex-1">
