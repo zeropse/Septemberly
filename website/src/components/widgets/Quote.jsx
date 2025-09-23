@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import quotes from "@/data/quotes.json";
 import {
   Card,
@@ -12,6 +12,7 @@ import { useQuoteStore } from "@/stores/quoteStore";
 
 export default function Quote({ className }) {
   const { quote, loadDailyQuote, refreshQuote } = useQuoteStore();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load daily quote on mount
   useEffect(() => {
@@ -19,16 +20,22 @@ export default function Quote({ className }) {
   }, [loadDailyQuote]);
 
   const handleRefresh = () => {
-    refreshQuote(quotes);
+    setIsRefreshing(true);
+    setTimeout(() => {
+      refreshQuote(quotes);
+      setIsRefreshing(false);
+    }, 200);
   };
 
   if (!quote) {
     return (
       <Card className={className}>
         <CardHeader>
-          <CardTitle className="font-bold">Quote of the Day</CardTitle>
+          <CardTitle className="font-semibold text-center text-3xl">
+            Quote of the Day
+          </CardTitle>
         </CardHeader>
-        <CardContent className="text-gray-500">Loading...</CardContent>
+        <CardContent className="text-center">Loading...</CardContent>
       </Card>
     );
   }
@@ -57,8 +64,9 @@ export default function Quote({ className }) {
           size="sm"
           onClick={handleRefresh}
           className="w-full cursor-pointer"
+          disabled={isRefreshing}
         >
-          Refresh
+          {isRefreshing ? "Refreshing..." : "Refresh"}
         </Button>
       </CardFooter>
     </Card>

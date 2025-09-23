@@ -4,6 +4,7 @@ import ErrorBoundary from "@/components/sections/ErrorBoundary";
 import Dock from "@/components/Dock";
 import widgets from "@/data/widgets.jsx";
 import { useAppStore } from "@/stores/appStore";
+import Loader from "@/components/sections/Loader";
 
 const Content = () => {
   const { activeWidget, onboarded } = useAppStore();
@@ -38,7 +39,7 @@ const Content = () => {
               return (
                 <div className="h-full" key={active.id}>
                   <ErrorBoundary>
-                    <Suspense fallback={<div className="p-4">Loading…</div>}>
+                    <Suspense fallback={<Loader className="bg-chart-1" />}>
                       <ActiveComponent />
                     </Suspense>
                   </ErrorBoundary>
