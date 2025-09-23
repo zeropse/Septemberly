@@ -65,14 +65,16 @@ const Home = () => {
           {/* Calendar + Music grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
             <div>
-              <Card className="bg-black/10 p-9 flex justify-center items-center">
-                <Calendar mode="single" selected={date} onSelect={setDate} />
+              <Card className="bg-black/10 p-8 min-h-72 w-full h-full flex justify-center items-start">
+                <div className="w-full h-full flex items-center justify-center">
+                  <Calendar mode="single" selected={date} onSelect={setDate} />
+                </div>
               </Card>
             </div>
 
             <div>
-              <Card className="bg-black/10">
-                <CardContent>
+              <Card className="bg-black/10 p-8 min-h-72 h-full flex flex-col">
+                <CardContent className="w-full">
                   <RetroMusicPlayer tracks={tracks} />
                 </CardContent>
               </Card>

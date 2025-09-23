@@ -60,8 +60,8 @@ export default function RetroMusicPlayer({ tracks = [], className = "" }) {
   }, []);
 
   return (
-    <Card className={cn("retro rounded-none p-0", className)} font="retro">
-      <CardContent className="p-5 flex flex-col items-center">
+    <Card className={cn("retro rounded-none p-2", className)} font="retro">
+      <CardContent className="p-2 flex flex-col items-center">
         <motion.img
           src="/record.png"
           alt="Record"

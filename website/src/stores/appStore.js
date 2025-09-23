@@ -56,7 +56,6 @@ export const useAppStore = create(
     {
       name: "app-storage", // localStorage key
       partialize: (state) => ({
-        activeWidget: state.activeWidget,
         profile: state.profile,
         onboarded: state.onboarded,
       }),
