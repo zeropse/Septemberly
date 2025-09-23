@@ -67,7 +67,7 @@ export default function NotesList({
               <CardContent>
                 <p className="whitespace-pre-wrap break-words">{n.content}</p>
               </CardContent>
-              <CardFooter className="flex gap-2">
+              <CardFooter className="flex m-1 gap-4">
                 <Button
                   size="sm"
                   onClick={() => handleEdit(n)}

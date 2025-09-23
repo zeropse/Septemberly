@@ -16,11 +16,13 @@ To visit the live website [Click Here](https://septemberly.zeropse.org/).
 
 ### Desktop GUI
 
-Download a prebuilt installer for macOS or Windows from the Releases page: https://github.com/zeropse/Septemberly/releases.
+Due to the signing requirements for macOS and Windows applications, we are unable to offer pre-built installers. However, you can easily build the application yourself:
 
-### Local
+1. From the root directory, change into the `gui/` (Electron) folder.
 
-To build locally, go the `gui/` folder (Electron) and the `website/` folder (web app) and check the `package.json` for further commands.
+2. To build for macOS, execute `pnpm or npm run build:mac`. You'll find the `.dmg` installer in the dist/ directory.
+
+3. To build for Windows, execute `pnpm or npm run build:win`. The `.exe` installer will be located in the dist/ directory.
 
 ## Website
 
@@ -38,8 +40,8 @@ Location: `gui/`
 
 Summary:
 
-- Electron-based desktop wrapper that appears to integrate the web UI (or a closely related UI) for native distribution.
-- Contains Electron + Vite configuration, signing/entitlements for macOS, and packaging metadata.
+- Electron-based desktop wrapper that appears to integrate the web UI for native distribution.
+- Contains Electron + Vite configuration and packaging metadata.
 
 Check `gui/electron-builder.yml` and `gui/electron.vite.config.mjs` for packaging details.
 
@@ -103,3 +105,48 @@ npm run build:win
 # or
 pnpm build:win
 ```
+
+You're right, there's a lot of repetition between the "GUI" and "Website" sections. This usually means that these two parts of your project share a significant amount of their front-end stack.
+
+Here's a more concise and organized way to present this information, highlighting the shared technologies and noting the differences:
+
+## Implemented Technologies
+
+This project consists of two main applications: a GUI (Electron app) and a Website (Browser). Both applications leverage a common set of front-end technologies, with specific additions for the GUI.
+
+### Front-End Technologies
+
+- **Frameworks & Runtime:**
+  - `react`, `react-dom`
+- **Bundling & Development Tooling:**
+  - `vite`, `@vitejs/plugin-react`
+- **UI & Component Libraries:**
+  - `@radix-ui/*` (avatar, checkbox, dialog, select, separator, slider, slot, switch)
+  - `@tabler/icons-react`
+  - `lucide-react`
+- **Styling & Utilities:**
+  - `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`
+  - `clsx`, `class-variance-authority`, `tailwind-merge`
+- **Motion & Animation:**
+  - `framer-motion`, `motion`
+- **State Management & Data Handling:**
+  - `zustand`, `date-fns`, `axios`
+- **Notifications / Toasts:**
+  - `sonner`
+
+### GUI (Electron App) Specific Technologies (`gui/`)
+
+In addition to the shared technologies, the GUI utilizes:
+
+- **Electron Specifics:**
+  - `electron`
+  - `electron-vite`, `electron-builder`
+  - `@electron-toolkit/*`
+- **Development & Linting:**
+  - `eslint`, `prettier`
+
+---
+
+**Notes:**
+
+Special thanks to [8bitCN](https://www.8bitcn.com/) for providing the styled components to use.

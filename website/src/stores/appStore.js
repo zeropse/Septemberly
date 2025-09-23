@@ -74,6 +74,4 @@ export const useProfileTrait = () =>
   useAppStore((state) => state.profile?.trait);
 
 export const useProfileAbout = () =>
-  useAppStore(
-    (state) => state.profile?.about || "Add something about yourself."
-  );
+  useAppStore((state) => state.profile?.about || "Please add about.");

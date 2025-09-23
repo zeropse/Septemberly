@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import widgets from "@/data/widgets.jsx";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import widgets from '@/data/widgets.jsx'
 
 export const useAppStore = create(
   persist(
@@ -17,7 +17,7 @@ export const useAppStore = create(
       setProfile: (profile) =>
         set({
           profile,
-          onboarded: true,
+          onboarded: true
         }),
 
       setProfileDraft: (draft) => set({ profileDraft: draft }),
@@ -26,54 +26,48 @@ export const useAppStore = create(
         set((state) => ({
           profileDraft: state.profileDraft
             ? { ...state.profileDraft, ...updates }
-            : { ...state.profile, ...updates },
+            : { ...state.profile, ...updates }
         })),
 
       clearProfileDraft: () => set({ profileDraft: null }),
 
       commitProfileDraft: () =>
         set((state) => ({
-          profile: state.profileDraft
-            ? { ...state.profileDraft }
-            : state.profile,
+          profile: state.profileDraft ? { ...state.profileDraft } : state.profile,
           profileDraft: null,
-          onboarded: Boolean(state.profileDraft) || state.onboarded,
+          onboarded: Boolean(state.profileDraft) || state.onboarded
         })),
 
       updateProfile: (updates) =>
         set((state) => ({
-          profile: state.profile ? { ...state.profile, ...updates } : updates,
+          profile: state.profile ? { ...state.profile, ...updates } : updates
         })),
 
       clearProfile: () =>
         set({
           profile: null,
-          onboarded: false,
+          onboarded: false
         }),
 
-      completeOnboarding: () => set({ onboarded: true }),
+      completeOnboarding: () => set({ onboarded: true })
     }),
     {
-      name: "app-storage", // localStorage key
+      name: 'app-storage', // localStorage key
       partialize: (state) => ({
         activeWidget: state.activeWidget,
         profile: state.profile,
-        onboarded: state.onboarded,
-      }),
+        onboarded: state.onboarded
+      })
     }
   )
-);
+)
 
 // Create computed selectors
-export const useIsOnboarded = () =>
-  useAppStore((state) => Boolean(state.profile));
+export const useIsOnboarded = () => useAppStore((state) => Boolean(state.profile))
 
-export const useProfileName = () => useAppStore((state) => state.profile?.name);
+export const useProfileName = () => useAppStore((state) => state.profile?.name)
 
-export const useProfileTrait = () =>
-  useAppStore((state) => state.profile?.trait);
+export const useProfileTrait = () => useAppStore((state) => state.profile?.trait)
 
 export const useProfileAbout = () =>
-  useAppStore(
-    (state) => state.profile?.about || "Add something about yourself."
-  );
+  useAppStore((state) => state.profile?.about || 'Please add about.')
