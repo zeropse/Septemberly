@@ -11,7 +11,7 @@ import {
   DialogClose,
   DialogTrigger
 } from '@/components/ui/8bit/dialog'
-import { version } from '../../../package.json'
+import { version } from '../../../../../package.json'
 import { IconBrandXFilled, IconBrandLinkedinFilled, IconBrandGithub } from '@tabler/icons-react'
 import { Card } from '@/components/ui/8bit/card'
 
