@@ -125,9 +125,13 @@ npm run build:win
 pnpm build:win
 ```
 
-You're right, there's a lot of repetition between the "GUI" and "Website" sections. This usually means that these two parts of your project share a significant amount of their front-end stack.
+## API
 
-Here's a more concise and organized way to present this information, highlighting the shared technologies and noting the differences:
+To use the weather features, you'll need an API key from
+[OpenWeather](https://openweathermap.org/api). Please add it to your `.env`
+file with the name `VITE_OPENWEATHER_API_KEY`, like this:
+
+`VITE_OPENWEATHER_API_KEY=YOUR_API_KEY`
 
 ## Implemented Technologies
 
@@ -166,6 +170,9 @@ In addition to the shared technologies, the GUI utilizes:
 
 ---
 
-**Notes:**
+**Acknowledgements:**
 
-Special thanks to [8bitCN](https://www.8bitcn.com/) for providing the styled components to use.
+This project owes a special thanks to:
+
+- [8bitCN](https://www.8bitcn.com/) for their contribution of styled components.
+- [electron-vite](https://electron-vite.org/) for making the development of the GUI a relatively task.
