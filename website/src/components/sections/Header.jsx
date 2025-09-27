@@ -32,13 +32,18 @@ const Header = () => {
 
   return (
     <>
-      <header className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <IconLeaf2 className="h-8 w-8" aria-hidden="true" />
-          <h1 className="text-3xl font-bold">Septemberly</h1>
+      <header className="flex items-center justify-between mb-4 md:mb-6 px-2 sm:px-4 md:px-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <IconLeaf2
+            className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
+            aria-hidden="true"
+          />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">
+            Septemberly
+          </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
           <ModeToggle />
 
           <Dialog>
@@ -46,14 +51,14 @@ const Header = () => {
               <Button
                 size="icon"
                 variant="outline"
-                className="cursor-pointer"
+                className="cursor-pointer h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
                 aria-label="Settings"
               >
-                <IconSettings className="h-7 w-7" />
+                <IconSettings className="h-4 w-4 sm:h-5 sm:w-5 md:h-7 md:w-7" />
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Settings</DialogTitle>
               </DialogHeader>
@@ -70,17 +75,19 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-0 rounded-full cursor-pointer"
+                className="p-0 rounded-full cursor-pointer h-8 w-8 sm:h-9 sm:w-9"
                 aria-label="Profile"
               >
-                <Avatar className="size-9" variant="pixel">
+                <Avatar className="h-8 w-8 sm:h-9 sm:w-9" variant="pixel">
                   <AvatarImage src="/Profile-Avatar.jpg" alt="ProfileAvatar" />
-                  <AvatarFallback>{initials}</AvatarFallback>
+                  <AvatarFallback className="text-xs sm:text-sm">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="sm:max-w-lg mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Profile</DialogTitle>
               </DialogHeader>

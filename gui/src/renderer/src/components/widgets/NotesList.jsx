@@ -79,18 +79,18 @@ export default function NotesList({
                         Are you sure? This action cannot be undone.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex gap-3">
+                    <DialogFooter className="flex flex-col sm:flex-row gap-3">
                       <Button
                         variant="outline"
                         onClick={() => setDeleteDialogId(null)}
-                        className="cursor-pointer w-1/2"
+                        className="cursor-pointer w-full sm:w-1/2"
                       >
                         Cancel
                       </Button>
                       <Button
                         variant="destructive"
                         onClick={() => handleDelete(n.id)}
-                        className="cursor-pointer w-1/2"
+                        className="cursor-pointer w-full sm:w-1/2"
                       >
                         Delete
                       </Button>

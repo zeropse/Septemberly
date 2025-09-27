@@ -21,8 +21,7 @@ const Content = () => {
         />
       )}
 
-      {/* Desktop/Laptop Layout */}
-      <div className="hidden md:block lg:block">
+      <div>
         <div
           className={`flex gap-10 ${
             shouldShowOnboarding
@@ -48,13 +47,6 @@ const Content = () => {
             })()}
           </div>
         </div>
-      </div>
-
-      {/* Mobile Message */}
-      <div className="block md:hidden lg:hidden text-center py-20">
-        <p className="text-lg font-semibold text-muted-foreground">
-          This app is not optimized for mobile devices.
-        </p>
       </div>
 
       <div
